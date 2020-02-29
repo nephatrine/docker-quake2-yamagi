@@ -50,6 +50,7 @@ RUN echo "====== BUILD MODULES ======" \
  && apt-get -y -q autoremove \
  && cd /usr/src && rm -rf /tmp/* /usr/src/* /var/lib/apt/lists/* /var/tmp/*
 
+COPY override /
 USER quake2-server
 EXPOSE 27910/udp
 ENTRYPOINT ["/usr/share/games/quake2/quake2-server"]
