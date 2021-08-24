@@ -1,0 +1,94 @@
+#!/usr/bin/with-contenv bash
+
+if [[ ! -d /mnt/config/data/quake2/baseq2 ]]; then
+  s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/baseq2/maps
+  s6-setuidgid guardian cp -n /opt/quake2/baseq2/*.cfg /mnt/config/data/quake2/baseq2/
+  cd /usr/src
+  if [[ ! -e /tmp/q2-314-demo-x86.exe ]]; then
+    wget -qO /tmp/q2-314-demo-x86.exe https://files.nephatrine.net/Q2/idstuff/q2-314-demo-x86.exe
+  fi
+  if [[ ! -e /tmp/q2-3.20-x86-full-ctf.exe ]]; then
+    wget -qO /tmp/q2-3.20-x86-full-ctf.exe https://files.nephatrine.net/Q2/idstuff/q2-3.20-x86-full-ctf.exe
+  fi
+  if [[ ! -e /tmp/match1.tar.gz ]]; then
+    wget -qO /tmp/match1.tar.gz https://files.nephatrine.net/Q2/idstuff/match1.tar.gz
+  fi
+  if [[ ! -e /tmp/dm_64.tar.gz ]]; then
+    wget -qO /tmp/dm_64.tar.gz https://files.nephatrine.net/Q2/idstuff/dm_64.tar.gz
+  fi
+  unzip -jq -d /mnt/config/data/quake2/baseq2/ /tmp/q2-314-demo-x86.exe \
+   Install/Data/baseq2/pak0.pak \
+   Install/Data/DOCS/license.txt
+  unzip -jq -d /mnt/config/data/quake2/baseq2/ /tmp/q2-3.20-x86-full-ctf.exe \
+   baseq2/maps.lst \
+   baseq2/pak1.pak \
+   baseq2/pak2.pak
+  tar x -C /mnt/config/data/quake2/baseq2/ -zf /tmp/match1.tar.gz \
+   pak3.pak
+  tar x -C /mnt/config/data/quake2/baseq2/maps/ -zf /tmp/dm_64.tar.gz \
+   base64.bsp \
+   city64.bsp \
+   sewer64.bsp
+fi
+
+if [[ ! -d /mnt/config/data/quake2/ctf ]]; then
+  s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/ctf/maps
+  cd /usr/src
+  if [[ ! -e /tmp/q2-3.20-x86-full-ctf.exe ]]; then
+    wget -qO /tmp/q2-3.20-x86-full-ctf.exe https://files.nephatrine.net/Q2/idstuff/q2-3.20-x86-full-ctf.exe
+  fi
+  if [[ ! -e /tmp/q2ctf150upgrade.zip ]]; then
+    wget -qO /tmp/q2ctf150upgrade.zip https://files.nephatrine.net/Q2/q2ctf/q2ctf150upgrade.zip
+  fi
+  if [[ ! -e /tmp/q2ctf4a.tar.gz ]]; then
+    wget -qO /tmp/q2ctf4a.tar.gz https://files.nephatrine.net/Q2/q2ctf/q2ctf4a.tar.gz
+  fi
+  unzip -jq -d /mnt/config/data/quake2/ctf/ /tmp/q2-3.20-x86-full-ctf.exe \
+   ctf/pak0.pak \
+   ctf/server.cfg
+  unzip -jq -d /mnt/config/data/quake2/ctf/ /tmp/q2ctf150upgrade.zip \
+   pak1.pak
+  tar x -C /mnt/config/data/quake2/ctf/maps/ -zf /tmp/q2ctf4a.tar.gz \
+   q2ctf4a.bsp
+fi
+
+if [[ -d /mnt/config/data/quake2/baseq2 ]]; then
+  if [[ ! -d /mnt/config/data/quake2/baseq2/maps ]]; then
+    s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/baseq2/maps
+  fi
+  s6-setuidgid guardian cp -n /opt/quake2/baseq2/maps/*.ent /mnt/config/data/quake2/baseq2/maps/
+fi
+
+if [[ -d /mnt/config/data/quake2/jugfull ]]; then
+  if [[ ! -d /mnt/config/data/quake2/jugfull/maps ]]; then
+    s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/jugfull/maps
+  fi
+  s6-setuidgid guardian cp -n /opt/quake2/jugfull/maps/*.ent /mnt/config/data/quake2/jugfull/maps/
+fi
+
+if [[ -d /mnt/config/data/quake2/xatrix ]]; then
+  if [[ ! -d /mnt/config/data/quake2/xatrix/maps ]]; then
+    s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/xatrix/maps
+  fi
+  s6-setuidgid guardian cp -n /opt/quake2/xatrix/maps/*.ent /mnt/config/data/quake2/xatrix/maps/
+fi
+
+if [[ -d /mnt/config/data/quake2/rogue ]]; then
+  if [[ ! -d /mnt/config/data/quake2/rogue/maps ]]; then
+    s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/rogue/maps
+  fi
+  s6-setuidgid guardian cp -n /opt/quake2/rogue/maps/*.ent /mnt/config/data/quake2/rogue/maps/
+fi
+
+if [[ -d /mnt/config/data/quake2/zaero ]]; then
+  if [[ ! -d /mnt/config/data/quake2/zaero/maps ]]; then
+    s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/zaero/maps
+  fi
+  s6-setuidgid guardian cp -n /opt/quake2/zaero/maps/*.ent /mnt/config/data/quake2/zaero/maps/
+fi
+
+GAME_LIBS=`find /mnt/config/data/quake2 -type f -name game.so | wc -l`
+if [[ ${GAME_LIBS} -gt 0 ]]; then
+  cd /mnt/config/data/quake2
+  cp --parents -R */game.so /opt/quake2/
+fi

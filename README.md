@@ -1,25 +1,38 @@
-[Git](https://code.nephatrine.net/nephatrine/docker-quake2) |
+[Git](https://code.nephatrine.net/nephatrine/docker-quake2/src/branch/master) |
 [Docker](https://hub.docker.com/r/nephatrine/quake2-server/) |
 [unRAID](https://code.nephatrine.net/nephatrine/unraid-containers)
 
 [![Build Status](https://ci.nephatrine.net/api/badges/nephatrine/docker-quake2/status.svg?ref=refs/heads/master)](https://ci.nephatrine.net/nephatrine/docker-quake2)
 
-# Docker Registry
+# Quake II Server
 
-This docker image contains a Docker Registry server to self-host your own
-docker registry.
+This docker image contains a Quake II dedicated server.
 
 **YOU WILL NEED TO USE A SEPARATE REVERSE PROXY SERVER TO SECURE THIS SERVICE.
-SEE THE [DOCUMENTATION](https://docs.docker.com/registry/recipes/nginx/) FOR
-MORE DETAILS ON HOW TO CONFIGURE SUCH A PROXY.**
+FOR INSTANCE, AN [NGINX](https://nginx.com/) REVERSE PROXY CONTAINER.**
 
-- [Docker Registry](https://docs.docker.com/registry/)
+- [Alpine Linux](https://alpinelinux.org/)
+- [Skarnet Software](https://skarnet.org/software/)
+- [S6 Overlay](https://github.com/just-containers/s6-overlay)
+- [Yamagi Quake II](https://yamagi.org/quake2/)
 
 You can spin up a quick temporary test container like this:
 
 ~~~
 docker run --rm -p 27910:27910 -it nephatrine/quake2-server:latest /bin/bash
 ~~~
+
+## Configuration Variables
+
+You can set these parameters using the syntax ``-e "VARNAME=VALUE"`` on your
+``docker run`` command. Some of these may only be used during initial
+configuration and further changes may need to be made in the generated
+configuration files.
+
+- ``GAME_START``: Startup Arguments (*"+exec server.cfg"*)
+- ``PUID``: Mount Owner UID (*1000*)
+- ``PGID``: Mount Owner GID (*100*)
+- ``TZ``: System Timezone (*America/New_York*)
 
 ## Persistent Mounts
 
@@ -28,18 +41,22 @@ syntax. These mountpoints are intended to house important configuration files,
 logs, and application state (e.g. databases) so they are not lost on image
 update.
 
-- ``/usr/share/games/quake2/baseq2``: Quake II Game Data.
-- ``/usr/share/games/quake2/ctf``: CTF Game Data.
-- ``/usr/share/games/quake2/xatrix``: The Reckoning Game Data.
-- ``/usr/share/games/quake2/rogue``: Ground Zero Game Data.
-- ``/usr/share/games/quake2/zaero``: Zaero Game Data.
-- ``/usr/share/games/quake2/3zb2``: 3rd Zigock Bot Game Data.
+- ``/mnt/config``: Persistent Data.
 
-There is no game data included in the image - not even the shareware demo.
-Please populate this yourself with a legal copy of Quake II.
+Do not share ``/mnt/config`` volumes between multiple containers as they may
+interfere with the operation of one another.
 
-On startup, the game will execute the ``server.cfg`` found in the ``baseq2``
-folder and so you can configure settings there.
+You can perform some basic configuration of the container using the files and
+directories listed below.
+
+- ``/mnt/config/data/quake2/``: Game Data. [*]
+- ``/mnt/config/data/quake2/baseq2/server.cfg``: Default Quake II Configuration. [*]
+- ``/mnt/config/etc/crontabs/<user>``: User Crontabs. [*]
+- ``/mnt/config/etc/logrotate.conf``: Logrotate Global Configuration.
+- ``/mnt/config/etc/logrotate.d/``: Logrotate Additional Configuration.
+
+**[*] Changes to some configuration files may require service restart to take
+immediate effect.**
 
 ## Network Services
 
