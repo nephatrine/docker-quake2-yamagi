@@ -1,0 +1,37 @@
+#!/usr/bin/with-contenv bash
+
+if [ ! -d /mnt/config/www/quake2 ]; then
+  s6-setuidgid guardian mkdir -p /mnt/config/www/quake2
+fi
+
+if [[ -d /tmp/quake2 ]]; then
+  rm -rf /tmp/quake2
+fi
+
+cd /mnt/config/data/quake2
+for dir in */; do
+  s6-setuidgid guardian mkdir -p /tmp/quake2/${dir}
+  find . -type f -name '*.pak' -exec s6-setuidgid guardian pakextract -o /tmp/quake2/${dir}/ {} \;
+done
+
+if [[ -d /tmp/quake2 ]]; then
+  cd /tmp/quake2
+  find . -type f -name '*.bsp' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+  find . -type f -name '*.md2' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+  find . -type f -name '*.pcx' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+  find . -type f -name '*.png' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+  find . -type f -name '*.sp2' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+  find . -type f -name '*.tga' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+  find . -type f -name '*.wal' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+  find . -type f -name '*.wav' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+  cd /mnt/config/data/quake2
+fi
+
+find . -type f -name '*.bsp' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+find . -type f -name '*.md2' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+find . -type f -name '*.pcx' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+find . -type f -name '*.png' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+find . -type f -name '*.sp2' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+find . -type f -name '*.tga' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+find . -type f -name '*.wal' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+find . -type f -name '*.wav' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
