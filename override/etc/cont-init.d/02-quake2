@@ -1,5 +1,14 @@
 #!/usr/bin/with-contenv bash
 
+if [[ -d /mnt/shared/data/quake2 ]]; then
+  cd /mnt/shared/data/quake2
+  find . -type f -name 'game.so' -exec s6-setuidgid guardian cp --parents {} /opt/quake2/ \;
+  exit 0
+elif [[ -d /mnt/config/data/quake2 ]]; then
+  cd /mnt/config/data/quake2
+  find . -type f -name 'game.so' -exec s6-setuidgid guardian cp --parents {} /opt/quake2/ \;
+fi
+
 if [[ ! -d /mnt/config/data/quake2/baseq2 ]]; then
   s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/baseq2/maps
   s6-setuidgid guardian cp -n /opt/quake2/baseq2/*.cfg /mnt/config/data/quake2/baseq2/
@@ -90,5 +99,9 @@ if [[ -d /mnt/config/data/quake2/zaero ]]; then
   s6-setuidgid guardian cp -n /opt/quake2/zaero/maps/*.ent /mnt/config/data/quake2/zaero/maps/
 fi
 
-cd /mnt/config/data/quake2
-find . -type f -name 'game.so' -exec s6-setuidgid guardian cp --parents {} /opt/quake2/ \;
+if [[ ! -z "${QUAKE2_MIRROR}" && "${QUAKE2_MIRROR}" == "true" ]]; then
+  if [[ -d /mnt/config/www/quake2 ]]; then
+    rm -rf /mnt/config/www/quake2/*
+  fi
+  /usr/local/bin/quake2-mirror
+fi

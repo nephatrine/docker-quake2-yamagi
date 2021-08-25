@@ -1,5 +1,7 @@
-FROM nephatrine/alpine-s6:latest
+FROM nephatrine/nginx-ssl:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
+
+ENV QUAKE2_MIRROR=true
 
 RUN echo "====== COMPILE QUAKE II ======" \
  && apk add \
@@ -29,7 +31,6 @@ RUN echo "====== COMPILE QUAKE II ======" \
  && make && mv release /opt/quake2/smd \
  && git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/pakextract.git && cd /usr/src/pakextract \
  && make && mv pakextract /usr/local/bin/ \
- && mkdir -p /mnt/shared \
  && cd /usr/src && rm -rf /usr/src/* \
  && apk del --purge .build-quake2 && rm -rf /var/cache/apk/*
 

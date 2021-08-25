@@ -10,11 +10,18 @@ platform:
 steps:
 - name: build-latest
   commands:
-  - docker build --pull -t pdr.nephatrine.net/nephatrine/quake2-server:latest .
+  - docker build --pull -t pdr.nephatrine.net/nephatrine/quake2-server:latest . -f Dockerfile
   - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/quake2-server:latest
   - docker tag pdr.nephatrine.net/nephatrine/quake2-server:latest nephatrine/quake2-server:latest
   - HOME=/mnt/config/home docker push nephatrine/quake2-server:latest
   - docker rmi pdr.nephatrine.net/nephatrine/quake2-server:latest
+- name: build-nginx
+  commands:
+  - docker build --pull -t pdr.nephatrine.net/nephatrine/quake2-server:nginx . -f Dockerfile.nginx
+  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/quake2-server:nginx
+  - docker tag pdr.nephatrine.net/nephatrine/quake2-server:nginx nephatrine/quake2-server:nginx
+  - HOME=/mnt/config/home docker push nephatrine/quake2-server:nginx
+  - docker rmi pdr.nephatrine.net/nephatrine/quake2-server:nginx
 
 ---
 kind: pipeline
@@ -36,6 +43,6 @@ depends_on:
 - default
 ---
 kind: signature
-hmac: 682f4a4c0c5bec6e64d66a2b63a327f467d785821a1c6d4b58ff90019954c970
+hmac: df0847fb24135c99fe147500d88cd732661e8cbd919fff7be8a5426d143e0a14
 
 ...

@@ -8,8 +8,10 @@
 
 This docker image contains a Quake II dedicated server.
 
-**YOU WILL NEED TO USE A SEPARATE REVERSE PROXY SERVER TO SECURE THIS SERVICE.
-FOR INSTANCE, AN [NGINX](https://nginx.com/) REVERSE PROXY CONTAINER.**
+If using the ``nginx`` tag, you can configure TLS the same way as the
+[nginx-ssl](https://code.nephatrine.net/nephatrine/docker-nginx-ssl) container.
+If part of a larger envinronment, we suggest using a separate container as a
+reverse proxy server and handle TLS there rather than here.
 
 - [Alpine Linux](https://alpinelinux.org/)
 - [Skarnet Software](https://skarnet.org/software/)
@@ -21,6 +23,11 @@ You can spin up a quick temporary test container like this:
 ~~~
 docker run --rm -p 27910:27910 -it nephatrine/quake2-server:latest /bin/bash
 ~~~
+
+## Docker Tags
+
+- **nephatrine/quake2-server:latest**: Yamagi Quake II / Alpine Latest
+- **nephatrine/quake2-server:nginx**: Yamagi Quake II / NGINX Mainline / Alpine Latest
 
 ## Configuration Variables
 
@@ -34,6 +41,9 @@ configuration files.
 - ``PGID``: Mount Owner GID (*100*)
 - ``TZ``: System Timezone (*America/New_York*)
 
+If using the ``nginx`` tag, you can use the additional configuration options documented
+for the [nginx-ssl](https://code.nephatrine.net/nephatrine/docker-nginx-ssl) container.
+
 ## Persistent Mounts
 
 You can provide a persistent mountpoint using the ``-v /host/path:/container/path``
@@ -42,9 +52,14 @@ logs, and application state (e.g. databases) so they are not lost on image
 update.
 
 - ``/mnt/config``: Persistent Data.
+- ``/mnt/shared``: Optional - Shared Game Data.
 
 Do not share ``/mnt/config`` volumes between multiple containers as they may
 interfere with the operation of one another.
+
+The ``/mnt/shared`` volume, if mounted, should contain a ``data/quake2``
+directory with the Quake II game data that should be used. This can be shared
+between multiple Quake II servers.
 
 You can perform some basic configuration of the container using the files and
 directories listed below.
