@@ -16,16 +16,19 @@ if [[ ! -d /mnt/config/data/quake2/baseq2 ]]; then
   if [[ ! -e /tmp/dm_64.tar.gz ]]; then
     wget -qO /tmp/dm_64.tar.gz https://files.nephatrine.net/Q2/idstuff/dm_64.tar.gz
   fi
-  unzip -jq -d /mnt/config/data/quake2/baseq2/ /tmp/q2-314-demo-x86.exe \
+  s6-setuidgid guardian unzip -jq -d /mnt/config/data/quake2/baseq2/ /tmp/q2-314-demo-x86.exe \
    Install/Data/baseq2/pak0.pak \
    Install/Data/DOCS/license.txt
-  unzip -jq -d /mnt/config/data/quake2/baseq2/ /tmp/q2-3.20-x86-full-ctf.exe \
+  s6-setuidgid guardian unzip -jq -d /mnt/config/data/quake2/baseq2/ /tmp/q2-3.20-x86-full-ctf.exe \
    baseq2/maps.lst \
    baseq2/pak1.pak \
    baseq2/pak2.pak
-  tar x -C /mnt/config/data/quake2/baseq2/ -zf /tmp/match1.tar.gz \
+  s6-setuidgid guardian mkdir /tmp/q2-3.20-x86-full-ctf
+  s6-setuidgid guardian unzip -d /tmp/q2-3.20-x86-full-ctf/ /tmp/q2-3.20-x86-full-ctf.exe
+  s6-setuidgid guardian mv /tmp/q2-3.20-x86-full-ctf/baseq2/players /mnt/config/data/quake2/baseq2/
+  s6-setuidgid guardian tar x -C /mnt/config/data/quake2/baseq2/ -zf /tmp/match1.tar.gz \
    pak3.pak
-  tar x -C /mnt/config/data/quake2/baseq2/maps/ -zf /tmp/dm_64.tar.gz \
+  s6-setuidgid guardian tar x -C /mnt/config/data/quake2/baseq2/maps/ -zf /tmp/dm_64.tar.gz \
    base64.bsp \
    city64.bsp \
    sewer64.bsp
@@ -43,12 +46,12 @@ if [[ ! -d /mnt/config/data/quake2/ctf ]]; then
   if [[ ! -e /tmp/q2ctf4a.tar.gz ]]; then
     wget -qO /tmp/q2ctf4a.tar.gz https://files.nephatrine.net/Q2/q2ctf/q2ctf4a.tar.gz
   fi
-  unzip -jq -d /mnt/config/data/quake2/ctf/ /tmp/q2-3.20-x86-full-ctf.exe \
+  s6-setuidgid guardian unzip -jq -d /mnt/config/data/quake2/ctf/ /tmp/q2-3.20-x86-full-ctf.exe \
    ctf/pak0.pak \
    ctf/server.cfg
-  unzip -jq -d /mnt/config/data/quake2/ctf/ /tmp/q2ctf150upgrade.zip \
+  s6-setuidgid guardian unzip -jq -d /mnt/config/data/quake2/ctf/ /tmp/q2ctf150upgrade.zip \
    pak1.pak
-  tar x -C /mnt/config/data/quake2/ctf/maps/ -zf /tmp/q2ctf4a.tar.gz \
+  s6-setuidgid guardian tar x -C /mnt/config/data/quake2/ctf/maps/ -zf /tmp/q2ctf4a.tar.gz \
    q2ctf4a.bsp
 fi
 
