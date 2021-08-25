@@ -35,4 +35,4 @@ RUN echo "====== COMPILE QUAKE II ======" \
  && apk del --purge .build-quake2 && rm -rf /var/cache/apk/*
 
 COPY override /
-EXPOSE 27910/udp
+EXPOSE 80/tcp 443/tcp 27910/udp
