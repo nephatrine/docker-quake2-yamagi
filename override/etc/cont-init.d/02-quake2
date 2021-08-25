@@ -87,6 +87,40 @@ if [[ ! -d /mnt/config/data/quake2/ctf ]]; then
   fi
 fi
 
+if [[ ! -d /mnt/config/data/quake2/zaero ]]; then
+  if [[ ! -e /tmp/zaerodemo.zip ]]; then
+    wget -qO /tmp/zaerodemo.zip https://files.nephatrine.net/Q2/zaero/zaerodemo.zip
+  fi
+  if [[ ! -e /tmp/zaerodm.zip ]]; then
+    wget -qO /tmp/zaerodm.zip https://files.nephatrine.net/Q2/zaero/zaerodm.zip
+  fi
+  if [[ ! -e /tmp/zaero-1.1.zip ]]; then
+    wget -qO /tmp/zaero-1.1.zip https://files.nephatrine.net/Q2/zaero/zaero-1.1.zip
+  fi
+  if [[ -e /tmp/zaerodemo.zip ]]; then
+    s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/zaero
+    s6-setuidgid guardian unzip -jq -d /mnt/config/data/quake2/zaero/ /tmp/zaerodemo.zip \
+     zdemo/config.cfg \
+     zdemo/pak0.pak
+    s6-setuidgid guardian mkdir /tmp/zaerodemo
+    s6-setuidgid guardian unzip -d /tmp/zaerodemo/ /tmp/zaerodemo.zip
+    s6-setuidgid guardian mv /tmp/zaerodemo/zdemo/sprites /mnt/config/data/quake2/zaero/
+    rm -f /tmp/zaerodemo.zip
+  fi
+  if [[ -e /tmp/zaero-1.1.zip ]]; then
+    s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/zaero
+    s6-setuidgid guardian unzip -jq -d /mnt/config/data/quake2/zaero/ /tmp/zaero-1.1.zip \
+     pak1.pak
+    rm -f /tmp/zaero-1.1.zip
+  fi
+  if [[ -e /tmp/zaerodm.zip ]]; then
+    s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/zaero
+    s6-setuidgid guardian unzip -jq -d /mnt/config/data/quake2/zaero/ /tmp/zaerodm.zip \
+     pak2.pak
+    rm -f /tmp/zaerodm.zip
+  fi
+fi
+
 if [[ -d /mnt/config/data/quake2/baseq2 ]]; then
   s6-setuidgid guardian cp -Rn /opt/quake2-data/baseq2/* /mnt/config/data/quake2/baseq2/
 fi
