@@ -125,7 +125,9 @@ if [[ -d /mnt/config/data/quake2/baseq2 && -d /opt/quake2-data/baseq2 ]]; then
   s6-setuidgid guardian cp -Rn /opt/quake2-data/baseq2/* /mnt/config/data/quake2/baseq2/
 fi
 if [[ -d /opt/quake2-data/3zb2 ]]; then
-  s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/3zb2
+  if [[ ! -d /mnt/config/data/quake2/3zb2 ]]; then
+    s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/3zb2
+  fi
   s6-setuidgid guardian cp -Rn /opt/quake2-data/3zb2/* /mnt/config/data/quake2/3zb2/
 fi
 if [[ -d /mnt/config/data/quake2/jugfull && -d /opt/quake2-data/jugfull ]]; then
