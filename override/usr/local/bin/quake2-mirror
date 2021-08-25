@@ -10,8 +10,17 @@ fi
 
 cd /mnt/config/data/quake2
 for dir in */; do
+  cd /mnt/config/data/quake2/${dir}
   s6-setuidgid guardian mkdir -p /tmp/quake2/${dir}
-  find . -type f -name '*.pak' -exec s6-setuidgid guardian pakextract -o /tmp/quake2/${dir}/ {} \;
+  if [[ "${dir}" == "baseq2/" || "${dir}" == "xatrix/" || "${dir}" == "rogue/" ]]; then
+    find . -type f -name 'pak*.pak' ! -name 'pak0.pak' | sort | egrep "pak[0-9].pak" \
+     | xargs -n1 -r s6-setuidgid guardian pakextract -o /tmp/quake2/${dir}
+  else
+    find . -type f -name 'pak*.pak' | sort | egrep "pak[0-9].pak" \
+     | xargs -n1 -r s6-setuidgid guardian pakextract -o /tmp/quake2/${dir}
+  fi
+  find . -type f -name '*.pak' | sort | egrep -v "pak[0-9].pak" \
+   | xargs -n1 -r s6-setuidgid guardian pakextract -o /tmp/quake2/${dir}
 done
 
 if [[ -d /tmp/quake2 ]]; then
@@ -24,9 +33,9 @@ if [[ -d /tmp/quake2 ]]; then
   find . -type f -name '*.tga' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
   find . -type f -name '*.wal' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
   find . -type f -name '*.wav' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
-  cd /mnt/config/data/quake2
 fi
 
+cd /mnt/config/data/quake2
 find . -type f -name '*.bsp' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
 find . -type f -name '*.md2' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
 find . -type f -name '*.pcx' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
