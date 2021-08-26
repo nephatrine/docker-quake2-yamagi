@@ -45,6 +45,5 @@ find . -type f -name '*.wal' -exec s6-setuidgid guardian cp --parents {} /mnt/co
 find . -type f -name '*.wav' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
 
 if [[ -d /mnt/config/www/default ]]; then
-  s6-setuidgid guardian cp /mnt/config/www/default/*.html /mnt/config/www/quake2/
+  s6-setuidgid guardian cp -Rn /mnt/config/www/default/* /mnt/config/www/quake2/
 fi
-echo "<html><head><title>Quake II HTTP Mirror</title></head><body><h1>Quake II HTTP Mirror</h1><p>This is the HTTP(S) file mirror for this Quake II server. It is utilized for serving game data only.</p></body></html>" | s6-setuidgid guardian tee /mnt/config/www/quake2/index.html
