@@ -2,11 +2,11 @@
 
 if [[ -d /mnt/shared/data/quake2 ]]; then
   cd /mnt/shared/data/quake2
-  find . -type f -name 'game*.so' -exec s6-setuidgid guardian cp --parents {} /opt/quake2/ \;
+  find . -type f -name 'game*.so' -exec cp --parents {} /opt/quake2/ \;
   exit 0
 elif [[ -d /mnt/config/data/quake2 ]]; then
   cd /mnt/config/data/quake2
-  find . -type f -name 'game*.so' -exec s6-setuidgid guardian cp --parents {} /opt/quake2/ \;
+  find . -type f -name 'game*.so' -exec cp --parents {} /opt/quake2/ \;
 fi
 
 if [[ ! -d /mnt/config/data/quake2/baseq2 ]]; then
