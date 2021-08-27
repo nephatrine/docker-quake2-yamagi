@@ -121,14 +121,21 @@ if [[ ! -d /mnt/config/data/quake2/zaero ]]; then
   fi
 fi
 
-if [[ -d /mnt/config/data/quake2/baseq2 && -d /opt/quake2-data/baseq2 ]]; then
-  s6-setuidgid guardian cp -Rn /opt/quake2-data/baseq2/* /mnt/config/data/quake2/baseq2/
-fi
 if [[ -d /opt/quake2-data/3zb2 ]]; then
   if [[ ! -d /mnt/config/data/quake2/3zb2 ]]; then
     s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/3zb2
   fi
   s6-setuidgid guardian cp -Rn /opt/quake2-data/3zb2/* /mnt/config/data/quake2/3zb2/
+fi
+if [[ -d /opt/quake2-data/q2admin ]]; then
+  if [[ ! -d /mnt/config/data/quake2/q2admin ]]; then
+    s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/q2admin
+  fi
+  s6-setuidgid guardian cp -Rn /opt/quake2-data/q2admin/* /mnt/config/data/quake2/q2admin/
+fi
+
+if [[ -d /mnt/config/data/quake2/baseq2 && -d /opt/quake2-data/baseq2 ]]; then
+  s6-setuidgid guardian cp -Rn /opt/quake2-data/baseq2/* /mnt/config/data/quake2/baseq2/
 fi
 if [[ -d /mnt/config/data/quake2/jugfull && -d /opt/quake2-data/jugfull ]]; then
   s6-setuidgid guardian cp -Rn /opt/quake2-data/jugfull/* /mnt/config/data/quake2/jugfull/
