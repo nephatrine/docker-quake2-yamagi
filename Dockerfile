@@ -32,6 +32,13 @@ RUN echo "====== COMPILE QUAKE II ======" \
  && mv 3zb2/pak10.pak 3zb2/pak6.pak && mv 3zb2 /opt/quake2-data/ \
  && git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/pakextract.git && cd /usr/src/pakextract \
  && make && mv pakextract /usr/local/bin/ \
+ && cp /opt/quake2-data/baseq2/game.so /opt/quake2-data/baseq2/game.real.so \
+ && cp /opt/quake2-data/ctf/game.so /opt/quake2-data/ctf/game.real.so \
+ && cp /opt/quake2-data/xatrix/game.so /opt/quake2-data/xatrix/game.real.so \
+ && cp /opt/quake2-data/rogue/game.so /opt/quake2-data/rogue/game.real.so \
+ && cp /opt/quake2-data/zaero/game.so /opt/quake2-data/zaero/game.real.so \
+ && cp /opt/quake2-data/smd/game.so /opt/quake2-data/smd/game.real.so \
+ && cp /opt/quake2-data/3zb2/game.so /opt/quake2-data/3zb2/game.real.so \
  && mkdir -p /mnt/shared \
  && cd /usr/src && rm -rf /usr/src/* \
  && apk del --purge .build-quake2 && rm -rf /var/cache/apk/*
