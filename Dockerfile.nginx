@@ -38,12 +38,12 @@ RUN echo "====== COMPILE QUAKE II ======" \
  && make && mv release /opt/quake2-data/q2admin \
  && mv *.txt /opt/quake2-data/q2admin/ \
  && cp /opt/quake2/baseq2/game.so /opt/quake2/baseq2/game.real.so \
+ && cp /opt/quake2/3zb2/game.so /opt/quake2/3zb2/game.real.so \
  && cp /opt/quake2/ctf/game.so /opt/quake2/ctf/game.real.so \
  && cp /opt/quake2/xatrix/game.so /opt/quake2/xatrix/game.real.so \
  && cp /opt/quake2/rogue/game.so /opt/quake2/rogue/game.real.so \
  && cp /opt/quake2/zaero/game.so /opt/quake2/zaero/game.real.so \
  && cp /opt/quake2/smd/game.so /opt/quake2/smd/game.real.so \
- && cp /opt/quake2/3zb2/game.so /opt/quake2/3zb2/game.real.so \
  && cd /usr/src && rm -rf /usr/src/* \
  && apk del --purge .build-quake2 && rm -rf /var/cache/apk/*
 
