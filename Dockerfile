@@ -3,6 +3,7 @@ LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
 RUN echo "====== COMPILE QUAKE II ======" \
  && apk add \
+  libcurl \
   screen sdl2 \
  && apk add --virtual .build-quake2 build-base \
   clang \
@@ -47,7 +48,7 @@ RUN echo "====== COMPILE QUAKE II ======" \
  && cp /opt/quake2/zaero/game.so /opt/quake2/zaero/game.real.so \
  && cp /opt/quake2/smd/game.so /opt/quake2/smd/game.real.so \
  && mkdir -p /mnt/shared \
- && cd /usr/src && rm -rf /usr/src/* \
+ && cd /usr/src && rm -rf /usr/src/* /usr/local/include/orca /usr/local/lib/*.a \
  && apk del --purge .build-quake2 && rm -rf /var/cache/apk/*
 
 COPY override /
