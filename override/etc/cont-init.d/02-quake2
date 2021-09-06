@@ -11,16 +11,16 @@ fi
 
 if [[ ! -d /mnt/config/data/quake2/baseq2 ]]; then
   if [[ ! -e /tmp/q2-314-demo-x86.exe ]]; then
-    wget -qO /tmp/q2-314-demo-x86.exe https://files.nephatrine.net/Q2/idstuff/q2-314-demo-x86.exe
+    wget -qO /tmp/q2-314-demo-x86.exe https://files.nephatrine.net/Downloads/idsoftware/q2-314-demo-x86.exe
   fi
   if [[ ! -e /tmp/q2-3.20-x86-full-ctf.exe ]]; then
-    wget -qO /tmp/q2-3.20-x86-full-ctf.exe https://files.nephatrine.net/Q2/idstuff/q2-3.20-x86-full-ctf.exe
+    wget -qO /tmp/q2-3.20-x86-full-ctf.exe https://files.nephatrine.net/Downloads/idsoftware/q2-3.20-x86-full-ctf.exe
   fi
   if [[ ! -e /tmp/match1.tar.gz ]]; then
-    wget -qO /tmp/match1.tar.gz https://files.nephatrine.net/Q2/idstuff/match1.tar.gz
+    wget -qO /tmp/match1.tar.gz https://files.nephatrine.net/Downloads/idsoftware/match1.tar.gz
   fi
   if [[ ! -e /tmp/dm_64.tar.gz ]]; then
-    wget -qO /tmp/dm_64.tar.gz https://files.nephatrine.net/Q2/idstuff/dm_64.tar.gz
+    wget -qO /tmp/dm_64.tar.gz https://files.nephatrine.net/Downloads/idsoftware/dm_64.tar.gz
   fi
   if [[ -e /tmp/q2-314-demo-x86.exe ]]; then
     s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/baseq2
@@ -58,13 +58,13 @@ fi
 
 if [[ ! -d /mnt/config/data/quake2/ctf ]]; then
   if [[ ! -e /tmp/q2-3.20-x86-full-ctf.exe ]]; then
-    wget -qO /tmp/q2-3.20-x86-full-ctf.exe https://files.nephatrine.net/Q2/idstuff/q2-3.20-x86-full-ctf.exe
+    wget -qO /tmp/q2-3.20-x86-full-ctf.exe https://files.nephatrine.net/Downloads/idsoftware/q2-3.20-x86-full-ctf.exe
   fi
   if [[ ! -e /tmp/q2ctf150upgrade.zip ]]; then
-    wget -qO /tmp/q2ctf150upgrade.zip https://files.nephatrine.net/Q2/q2ctf/q2ctf150upgrade.zip
+    wget -qO /tmp/q2ctf150upgrade.zip https://files.nephatrine.net/Downloads/idsoftware/q2ctf150upgrade.zip
   fi
   if [[ ! -e /tmp/q2ctf4a.tar.gz ]]; then
-    wget -qO /tmp/q2ctf4a.tar.gz https://files.nephatrine.net/Q2/q2ctf/q2ctf4a.tar.gz
+    wget -qO /tmp/q2ctf4a.tar.gz https://files.nephatrine.net/Downloads/idsoftware/q2ctf4a.tar.gz
   fi
   if [[ -e /tmp/q2-3.20-x86-full-ctf.exe ]]; then
     s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/ctf
@@ -89,13 +89,13 @@ fi
 
 if [[ ! -d /mnt/config/data/quake2/zaero ]]; then
   if [[ ! -e /tmp/zaerodemo.zip ]]; then
-    wget -qO /tmp/zaerodemo.zip https://files.nephatrine.net/Q2/zaero/zaerodemo.zip
+    wget -qO /tmp/zaerodemo.zip https://files.nephatrine.net/Downloads/teamevolve/zaerodemo.zip
   fi
   if [[ ! -e /tmp/zaerodm.zip ]]; then
-    wget -qO /tmp/zaerodm.zip https://files.nephatrine.net/Q2/zaero/zaerodm.zip
+    wget -qO /tmp/zaerodm.zip https://files.nephatrine.net/Downloads/teamevolve/zaerodm.zip
   fi
   if [[ ! -e /tmp/zaero-1.1.zip ]]; then
-    wget -qO /tmp/zaero-1.1.zip https://files.nephatrine.net/Q2/zaero/zaero-1.1.zip
+    wget -qO /tmp/zaero-1.1.zip https://files.nephatrine.net/Downloads/teamevolve/zaero-1.1.zip
   fi
   if [[ -e /tmp/zaerodemo.zip ]]; then
     s6-setuidgid guardian mkdir -p /mnt/config/data/quake2/zaero
