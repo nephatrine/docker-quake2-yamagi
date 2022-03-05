@@ -1,13 +1,14 @@
 FROM nephatrine/alpine-s6:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
-RUN echo "====== COMPILE QUAKE II ======" \
- && apk add \
+RUN echo "====== INSTALL TOOLS ======" \
+ && apk add --no-cache \
   libcurl \
-  screen sdl2 \
- && apk add --virtual .build-quake2 build-base \
-  clang \
-  curl-dev \
+  screen sdl2
+
+RUN echo "====== COMPILE QUAKE II ======" \
+ && apk add --no-cache --virtual .build-quake2 build-base \
+  clang curl-dev \
   git \
   linux-headers \
   openssl-dev \
@@ -35,11 +36,6 @@ RUN echo "====== COMPILE QUAKE II ======" \
  && mv 3zb2/pak10.pak 3zb2/pak6.pak && mv 3zb2 /opt/quake2-data/ \
  && git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/pakextract.git && cd /usr/src/pakextract \
  && make && mv pakextract /usr/local/bin/ \
- && git -C /usr/src clone --single-branch --depth=1 https://github.com/cee-studio/orca.git && cd /usr/src/orca \
- && make botx && make install \
- && git -C /usr/src clone --single-branch --depth=1 https://code.nephatrine.net/nephatrine/q2admin-nxmod.git && cd /usr/src/q2admin-nxmod \
- && make && mv release /opt/quake2-data/q2admin \
- && mv *.txt *.json /opt/quake2-data/q2admin/ \
  && cp /opt/quake2/baseq2/game.so /opt/quake2/baseq2/game.real.so \
  && cp /opt/quake2/3zb2/game.so /opt/quake2/3zb2/game.real.so \
  && cp /opt/quake2/ctf/game.so /opt/quake2/ctf/game.real.so \
@@ -48,8 +44,20 @@ RUN echo "====== COMPILE QUAKE II ======" \
  && cp /opt/quake2/zaero/game.so /opt/quake2/zaero/game.real.so \
  && cp /opt/quake2/smd/game.so /opt/quake2/smd/game.real.so \
  && mkdir -p /mnt/shared \
+ && cd /usr/src && rm -rf /usr/src/* \
+ && apk del --purge .build-quake2
+
+RUN echo "====== COMPILE Q2ADMIN ======" \
+ && apk add --no-cache --virtual .build-q2admin build-base \
+  clang curl-dev \
+  git \
+ && git -C /usr/src clone --single-branch --depth=1 https://github.com/cee-studio/orca.git && cd /usr/src/orca \
+ && make discord github && make install \
+ && git -C /usr/src clone --single-branch --depth=1 https://code.nephatrine.net/nephatrine/q2admin-nxmod.git && cd /usr/src/q2admin-nxmod \
+ && make && mv release /opt/quake2-data/q2admin \
+ && mv *.txt *.json /opt/quake2-data/q2admin/ \
  && cd /usr/src && rm -rf /usr/src/* /usr/local/include/orca /usr/local/lib/*.a \
- && apk del --purge .build-quake2 && rm -rf /var/cache/apk/*
+ && apk del --purge .build-q2admin
 
 COPY override /
 EXPOSE 27910/udp
