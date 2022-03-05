@@ -1,0 +1,18 @@
+#!/command/with-contenv /bin/bash
+
+GAME_START=${GAME_START:-"+exec server.cfg"}
+
+cd /opt/quake2
+
+if ! /usr/bin/pgrep -f quakedock >/dev/null; then
+  export HOME=/mnt/config/home
+  if [[ -d /mnt/shared/data/quake2 ]]; then
+    /command/s6-setuidgid guardian /usr/bin/screen -dmS quakedock ./q2ded -datadir /mnt/shared/data/quake2 +set basepath /mnt/shared/data/quake2 +set savepath /mnt/config/home/.yq2 ${GAME_START};
+  else
+    /command/s6-setuidgid guardian /usr/bin/screen -dmS quakedock ./q2ded -datadir /mnt/config/data/quake2 +set basepath /mnt/config/data/quake2 +set savepath /mnt/config/home/.yq2 ${GAME_START};
+  fi
+  sleep 10
+fi
+while /usr/bin/pgrep -f quakedock >/dev/null; do
+  sleep 60
+done

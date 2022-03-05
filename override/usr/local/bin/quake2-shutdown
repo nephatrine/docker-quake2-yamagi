@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if /usr/bin/pgrep -f quakedock >/dev/null; then
+  /command/s6-setuidgid guardian /usr/bin/screen -S quakedock -X stuff "`echo -ne \"say QUAKE II SERVER SHUTTING DOWN!\r\"`"
+  sleep 6
+  /command/s6-setuidgid guardian /usr/bin/screen -S quakedock -X stuff "`echo -ne \"quit\r\"`"
+  sleep 2
+fi

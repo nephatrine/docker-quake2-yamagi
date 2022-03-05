@@ -1,49 +1,49 @@
 #!/usr/bin/with-contenv bash
 
 if [ ! -d /mnt/config/www/quake2 ]; then
-  s6-setuidgid guardian mkdir -p /mnt/config/www/quake2
+  /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/www/quake2
 fi
 if [[ -d /tmp/quake2 ]]; then
-  rm -rf /tmp/quake2
+  /bin/rm -rf /tmp/quake2
 fi
 
 cd /mnt/config/data/quake2
 for dir in */; do
   cd /mnt/config/data/quake2/${dir}
-  s6-setuidgid guardian mkdir -p /tmp/quake2/${dir}
+  /command/s6-setuidgid guardian /bin/mkdir -p /tmp/quake2/${dir}
   if [[ "${dir}" == "baseq2/" || "${dir}" == "xatrix/" || "${dir}" == "rogue/" ]]; then
-    find . -type f -name 'pak*.pak' ! -name 'pak0.pak' | sort | egrep "pak[0-9].pak" \
-     | xargs -n1 -r s6-setuidgid guardian pakextract -o /tmp/quake2/${dir}
+    /usr/bin/find . -type f -name 'pak*.pak' ! -name 'pak0.pak' | sort | egrep "pak[0-9].pak" \
+     | /usr/bin/xargs -n1 -r /command/s6-setuidgid guardian /usr/local/bin/pakextract -o /tmp/quake2/${dir}
   else
-    find . -type f -name 'pak*.pak' | sort | egrep "pak[0-9].pak" \
-     | xargs -n1 -r s6-setuidgid guardian pakextract -o /tmp/quake2/${dir}
+    /usr/bin/find . -type f -name 'pak*.pak' | sort | egrep "pak[0-9].pak" \
+     | /usr/bin/xargs -n1 -r /command/s6-setuidgid guardian /usr/local/bin/pakextract -o /tmp/quake2/${dir}
   fi
-  find . -type f -name '*.pak' | sort | egrep -v "pak[0-9].pak" \
-   | xargs -n1 -r s6-setuidgid guardian pakextract -o /tmp/quake2/${dir}
+  /usr/bin/find . -type f -name '*.pak' | sort | egrep -v "pak[0-9].pak" \
+   | /usr/bin/xargs -n1 -r /command/s6-setuidgid guardian /usr/local/bin/pakextract -o /tmp/quake2/${dir}
 done
 
 if [[ -d /tmp/quake2 ]]; then
   cd /tmp/quake2
-  find . -type f -name '*.bsp' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
-  find . -type f -name '*.md2' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
-  find . -type f -name '*.pcx' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
-  find . -type f -name '*.png' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
-  find . -type f -name '*.sp2' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
-  find . -type f -name '*.tga' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
-  find . -type f -name '*.wal' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
-  find . -type f -name '*.wav' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+  /usr/bin/find . -type f -name '*.bsp' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
+  /usr/bin/find . -type f -name '*.md2' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
+  /usr/bin/find . -type f -name '*.pcx' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
+  /usr/bin/find . -type f -name '*.png' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
+  /usr/bin/find . -type f -name '*.sp2' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
+  /usr/bin/find . -type f -name '*.tga' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
+  /usr/bin/find . -type f -name '*.wal' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
+  /usr/bin/find . -type f -name '*.wav' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
 fi
 
 cd /mnt/config/data/quake2
-find . -type f -name '*.bsp' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
-find . -type f -name '*.md2' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
-find . -type f -name '*.pcx' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
-find . -type f -name '*.png' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
-find . -type f -name '*.sp2' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
-find . -type f -name '*.tga' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
-find . -type f -name '*.wal' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
-find . -type f -name '*.wav' -exec s6-setuidgid guardian cp --parents {} /mnt/config/www/quake2/ \;
+/usr/bin/find . -type f -name '*.bsp' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
+/usr/bin/find . -type f -name '*.md2' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
+/usr/bin/find . -type f -name '*.pcx' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
+/usr/bin/find . -type f -name '*.png' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
+/usr/bin/find . -type f -name '*.sp2' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
+/usr/bin/find . -type f -name '*.tga' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
+/usr/bin/find . -type f -name '*.wal' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
+/usr/bin/find . -type f -name '*.wav' -exec /command/s6-setuidgid guardian /bin/cp --parents {} /mnt/config/www/quake2/ \;
 
 if [[ -d /mnt/config/www/default ]]; then
-  s6-setuidgid guardian cp -Rn /mnt/config/www/default/* /mnt/config/www/quake2/
+  /command/s6-setuidgid guardian /bin/cp -Rn /mnt/config/www/default/* /mnt/config/www/quake2/
 fi
