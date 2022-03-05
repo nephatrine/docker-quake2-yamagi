@@ -30,6 +30,7 @@ name: after
 steps:
 - name: notify
   image: appleboy/drone-discord
+  failure: ignore
   settings:
     avatar_url: https://nephatrine.net/images/buttons/drone-ci.png
     message: "Build of **[{{repo.name}}:{{commit.branch}}](<https://code.nephatrine.net/nephatrine/{{repo.name}}/src/branch/{{commit.branch}}>)** returned [{{build.status}}](<{{build.link}}>)."
@@ -41,8 +42,14 @@ steps:
 
 depends_on:
 - default
+
+trigger:
+  status:
+  - success
+  - failure
+
 ---
 kind: signature
-hmac: df0847fb24135c99fe147500d88cd732661e8cbd919fff7be8a5426d143e0a14
+hmac: db232f6a0406fd04f832398775ca621cc70c4cfbf6eaacdb7ddd0434f06aa39e
 
 ...
