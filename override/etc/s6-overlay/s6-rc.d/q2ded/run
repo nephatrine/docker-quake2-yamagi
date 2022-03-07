@@ -6,10 +6,22 @@ cd /opt/quake2
 
 if ! /usr/bin/pgrep -f quakedock >/dev/null; then
   export HOME=/mnt/config/home
+  
+  if [[ -f ${HOME}/.yq2/baseq2/qconsole.log ]]; then
+    /bin/ls -la ${HOME}/.yq2/baseq2/qconsole.log | /command/s6-setuidgid guardian /usr/bin/tee -a /mnt/config/log/qconsole.log
+    /bin/cat ${HOME}/.yq2/baseq2/qconsole.log | /command/s6-setuidgid guardian /usr/bin/tee -a /mnt/config/log/qconsole.log
+    /bin/rm -f ${HOME}/.yq2/baseq2/qconsole.log
+  fi
+  
   if [[ -d /mnt/shared/data/quake2 ]]; then
     /command/s6-setuidgid guardian /usr/bin/screen -dmS quakedock ./q2ded -datadir /mnt/shared/data/quake2 +set basepath /mnt/shared/data/quake2 +set savepath /mnt/config/home/.yq2 ${GAME_START};
   else
     /command/s6-setuidgid guardian /usr/bin/screen -dmS quakedock ./q2ded -datadir /mnt/config/data/quake2 +set basepath /mnt/config/data/quake2 +set savepath /mnt/config/home/.yq2 ${GAME_START};
+  fi
+
+  if [[ -f ${HOME}/.screenrc ]]; then
+    /bin/chown guardian:users ${HOME}
+    /bin/chown guardian:users ${HOME}/.screenrc
   fi
   sleep 10
 fi

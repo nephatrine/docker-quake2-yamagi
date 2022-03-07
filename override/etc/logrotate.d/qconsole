@@ -1,0 +1,4 @@
+/mnt/config/log/qconsole.log {
+	missingok
+	notifempty
+}
