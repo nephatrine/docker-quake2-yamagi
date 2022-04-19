@@ -6,6 +6,7 @@ steps:
 - name: local-latest
   image: plugins/docker
   settings:
+    daemon_off: true
     registry: pdr.nephatrine.net
     repo: quake2-server
     tags:
@@ -17,6 +18,7 @@ steps:
 - name: remote-latest
   image: plugins/docker
   settings:
+    daemon_off: true
     repo: quake2-server
     tags:
       - latest
@@ -29,6 +31,7 @@ steps:
 - name: local-nginx
   image: plugins/docker
   settings:
+    daemon_off: true
     registry: pdr.nephatrine.net
     repo: quake2-server
     dockerfile: Dockerfile.nginx
@@ -43,6 +46,7 @@ steps:
 - name: remote-nginx
   image: plugins/docker
   settings:
+    daemon_off: true
     repo: quake2-server
     dockerfile: Dockerfile.nginx
     tags:
@@ -81,6 +85,6 @@ trigger:
 
 ---
 kind: signature
-hmac: e40634c8fa6f5f410d8fc065ba5bb85b16890c251d9c423c5d560a083798dd2e
+hmac: 024fafba17c089517bc1709084b02fb510b69983715501f69de2d6a6a112f59c
 
 ...
