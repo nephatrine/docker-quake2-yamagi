@@ -9,7 +9,7 @@ steps:
     custom_dns: 192.168.20.1
     registry: pdr.nephatrine.net
     repo: pdr.nephatrine.net/nephatrine/quake2-server
-    cache-from: pdr.nephatrine.net/nephatrine/quake2-server:latest
+    cache_from: pdr.nephatrine.net/nephatrine/quake2-server:latest
     tags:
       - latest
     username:
@@ -21,7 +21,7 @@ steps:
   settings:
     custom_dns: 192.168.20.1
     repo: nephatrine/quake2-server
-    cache-from: pdr.nephatrine.net/nephatrine/quake2-server:latest
+    cache_from: pdr.nephatrine.net/nephatrine/quake2-server:latest
     tags:
       - latest
     username:
@@ -36,7 +36,7 @@ steps:
     custom_dns: 192.168.20.1
     registry: pdr.nephatrine.net
     repo: pdr.nephatrine.net/nephatrine/quake2-server
-    cache-from: pdr.nephatrine.net/nephatrine/quake2-server:nginx
+    cache_from: pdr.nephatrine.net/nephatrine/quake2-server:nginx
     dockerfile: Dockerfile.nginx
     tags:
       - nginx
@@ -51,7 +51,7 @@ steps:
   settings:
     custom_dns: 192.168.20.1
     repo: nephatrine/quake2-server
-    cache-from: pdr.nephatrine.net/nephatrine/quake2-server:nginx
+    cache_from: pdr.nephatrine.net/nephatrine/quake2-server:nginx
     dockerfile: Dockerfile.nginx
     tags:
       - nginx
@@ -89,6 +89,6 @@ trigger:
 
 ---
 kind: signature
-hmac: 5fb9b9ad54b660c9591ccc33d12a09810e53c4ce9c9bfe23b5b7f23e55610181
+hmac: 8223ae84e9a7428de51c5616c5a48d3464bd34ec0490f4f9fca263dc0194a8fc
 
 ...
