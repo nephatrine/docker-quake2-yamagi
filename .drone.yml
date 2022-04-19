@@ -1,27 +1,58 @@
 ---
 kind: pipeline
-type: exec
 name: default
 
-platform:
-  os: linux
-  arch: amd64
-
 steps:
-- name: build-latest
-  commands:
-  - docker build --pull -t pdr.nephatrine.net/nephatrine/quake2-server:latest . -f Dockerfile
-  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/quake2-server:latest
-  - docker tag pdr.nephatrine.net/nephatrine/quake2-server:latest nephatrine/quake2-server:latest
-  - HOME=/mnt/config/home docker push nephatrine/quake2-server:latest
-  - docker rmi pdr.nephatrine.net/nephatrine/quake2-server:latest
-- name: build-nginx
-  commands:
-  - docker build --pull -t pdr.nephatrine.net/nephatrine/quake2-server:nginx . -f Dockerfile.nginx
-  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/quake2-server:nginx
-  - docker tag pdr.nephatrine.net/nephatrine/quake2-server:nginx nephatrine/quake2-server:nginx
-  - HOME=/mnt/config/home docker push nephatrine/quake2-server:nginx
-  - docker rmi pdr.nephatrine.net/nephatrine/quake2-server:nginx
+- name: local-latest
+  image: plugins/docker
+  settings:
+    registry: pdr.nephatrine.net
+    repo: quake2-server
+    tags:
+      - latest
+    username:
+      from_secret: docker-user-pdr
+    password:
+      from_secret: docker-pass-pdr
+- name: remote-latest
+  image: plugins/docker
+  settings:
+    repo: quake2-server
+    tags:
+      - latest
+    username:
+      from_secret: docker-user
+    password:
+      from_secret: docker-pass
+  depends_on:
+  - local-latest
+- name: local-nginx
+  image: plugins/docker
+  settings:
+    registry: pdr.nephatrine.net
+    repo: quake2-server
+    dockerfile: Dockerfile.nginx
+    tags:
+      - nginx
+    username:
+      from_secret: docker-user-pdr
+    password:
+      from_secret: docker-pass-pdr
+  depends_on:
+  - local-latest
+- name: remote-nginx
+  image: plugins/docker
+  settings:
+    repo: quake2-server
+    dockerfile: Dockerfile.nginx
+    tags:
+      - nginx
+    username:
+      from_secret: docker-user
+    password:
+      from_secret: docker-pass
+  depends_on:
+  - local-nginx
 
 ---
 kind: pipeline
@@ -50,6 +81,6 @@ trigger:
 
 ---
 kind: signature
-hmac: db232f6a0406fd04f832398775ca621cc70c4cfbf6eaacdb7ddd0434f06aa39e
+hmac: e40634c8fa6f5f410d8fc065ba5bb85b16890c251d9c423c5d560a083798dd2e
 
 ...
