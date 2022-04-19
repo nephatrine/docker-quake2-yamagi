@@ -20,6 +20,7 @@ steps:
   image: plugins/docker
   settings:
     custom_dns: 192.168.20.1
+    pull-image: true
     repo: nephatrine/quake2-server
     tags:
       - latest
@@ -44,11 +45,12 @@ steps:
     password:
       from_secret: docker-pass-pdr
   depends_on:
-  - local-latest
+  - remote-latest
 - name: remote-nginx
   image: plugins/docker
   settings:
     custom_dns: 192.168.20.1
+    pull-image: true
     repo: nephatrine/quake2-server
     dockerfile: Dockerfile.nginx
     tags:
@@ -87,6 +89,6 @@ trigger:
 
 ---
 kind: signature
-hmac: 7eb80d986f8009cd7f83df2819c86d393b36c1461509df7e6399c8523bf2a6df
+hmac: fbbc83be907e72a206391783256d4886f308cf56ecc6da7c8649dce1f6765983
 
 ...
