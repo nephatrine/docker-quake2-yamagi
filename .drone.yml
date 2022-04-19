@@ -9,7 +9,7 @@ steps:
     custom_dns: 192.168.20.1
     pull-image: true
     registry: pdr.nephatrine.net
-    repo: quake2-server
+    repo: nephatrine/quake2-server
     tags:
       - latest
     username:
@@ -20,7 +20,7 @@ steps:
   image: plugins/docker
   settings:
     custom_dns: 192.168.20.1
-    repo: quake2-server
+    repo: nephatrine/quake2-server
     tags:
       - latest
     username:
@@ -35,7 +35,7 @@ steps:
     custom_dns: 192.168.20.1
     pull-image: true
     registry: pdr.nephatrine.net
-    repo: quake2-server
+    repo: nephatrine/quake2-server
     dockerfile: Dockerfile.nginx
     tags:
       - nginx
@@ -49,7 +49,7 @@ steps:
   image: plugins/docker
   settings:
     custom_dns: 192.168.20.1
-    repo: quake2-server
+    repo: nephatrine/quake2-server
     dockerfile: Dockerfile.nginx
     tags:
       - nginx
@@ -87,6 +87,6 @@ trigger:
 
 ---
 kind: signature
-hmac: 3d0a4f51135a7308303fd48619dd888297117546e884ab489d407776bcae20bb
+hmac: 4655355472a2126353cbf2ce11592c7d6a6272c874ce46b2485ac239fad56e5e
 
 ...
