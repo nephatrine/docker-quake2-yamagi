@@ -1,63 +1,82 @@
-FROM nephatrine/alpine-s6:latest
-LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
+FROM pdr.nephatrine.net/nephatrine/alpine-builder:latest AS builder
 
-RUN echo "====== INSTALL TOOLS ======" \
- && apk add --no-cache \
-  libcurl \
-  screen sdl2
+RUN echo "====== INSTALL LIBRARIES ======" \
+ && apk add --no-cache curl-dev openssl-dev sdl2-dev
+
+RUN git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/yquake2.git
+RUN git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/ctf.git
+RUN git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/xatrix.git
+RUN git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/rogue.git
+RUN git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/zaero.git
+RUN git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/slightmechanicaldestruction.git
+RUN git -C /usr/src clone --single-branch --depth=1 https://github.com/DirtBagXon/3zb2-zigflag.git
+RUN git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/pakextract.git
+RUN git -C /usr/src clone --single-branch --depth=1 https://github.com/cee-studio/orca.git
+RUN git -C /usr/src clone --single-branch --depth=1 https://code.nephatrine.net/nephatrine/q2admin-nxmod.git
 
 RUN echo "====== COMPILE QUAKE II ======" \
- && apk add --no-cache --virtual .build-quake2 build-base \
-  clang curl-dev \
-  git \
-  linux-headers \
-  openssl-dev \
-  sdl2-dev \
- && git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/yquake2.git && cd /usr/src/yquake2 \
- && make server game && mv release /opt/quake2 \
- && mkdir -p /opt/quake2-data/baseq2/maps && cp stuff/mapfixes/baseq2/*.ent /opt/quake2-data/baseq2/maps/ \
- && mkdir -p /opt/quake2-data/jugfull/maps && cp stuff/mapfixes/juggernaut/*.ent /opt/quake2-data/jugfull/maps/ \
- && mv stuff/yq2.cfg /opt/quake2-data/baseq2/ \
- && git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/ctf.git && cd /usr/src/ctf \
- && make && mv release /opt/quake2/ctf \
- && git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/xatrix.git && cd /usr/src/xatrix \
- && make && mv release /opt/quake2/xatrix \
- && mkdir -p /opt/quake2-data/xatrix/maps && cp stuff/mapfixes/*.ent /opt/quake2-data/xatrix/maps/ \
- && git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/rogue.git && cd /usr/src/rogue \
- && make && mv release /opt/quake2/rogue \
- && mkdir -p /opt/quake2-data/rogue/maps && cp stuff/mapfixes/*.ent /opt/quake2-data/rogue/maps/ \
- && git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/zaero.git && cd /usr/src/zaero \
- && make && mv release /opt/quake2/zaero \
- && mkdir -p /opt/quake2-data/zaero/maps && cp stuff/mapfixes/*.ent /opt/quake2-data/zaero/maps/ \
- && git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/slightmechanicaldestruction.git && cd /usr/src/slightmechanicaldestruction \
- && make && mv release /opt/quake2/smd \
- && git -C /usr/src clone --single-branch --depth=1 https://github.com/DirtBagXon/3zb2-zigflag.git && cd /usr/src/3zb2-zigflag \
- && make && mv release /opt/quake2/3zb2 \
- && mv 3zb2/pak10.pak 3zb2/pak6.pak && mv 3zb2 /opt/quake2-data/ \
- && git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/pakextract.git && cd /usr/src/pakextract \
- && make && mv pakextract /usr/local/bin/ \
+ && cd /usr/src/yquake2 \
+ && make server game \
+ && cd /usr/src/ctf \
+ && make
+RUN echo "====== COMPILE EXPANSIONS ======" \
+ && cd /usr/src/xatrix \
+ && make \
+ && cd /usr/src/rogue \
+ && make \
+ && cd /usr/src/zaero \
+ && make
+RUN echo "====== COMPILE MODS ======" \
+ && cd /usr/src/slightmechanicaldestruction \
+ && make \
+ && cd /usr/src/3zb2-zigflag \
+ && make \
+ && mv 3zb2/pak10.pak 3zb2/pak6.pak
+RUN echo "====== COMPILE TOOLS ======" \
+ && cd /usr/src/pakextract \
+ && make
+RUN echo "====== COMPILE Q2ADMIN ======" \
+ && cd /usr/src/orca \
+ && make discord github \
+ && make install \
+ && cd /usr/src/q2admin-nxmod \
+ && make \
+ && mv *.txt *.json release/
+
+# rm -rf /usr/src/* /usr/local/include/orca /usr/local/lib/*.a \
+
+FROM pdr.nephatrine.net/nephatrine/alpine-s6:latest
+LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
+
+RUN echo "====== INSTALL PACKAGES ======" \
+ && apk add --no-cache libcurl screen sdl2 \
+ && mkdir -p /mnt/shared
+
+COPY --from=builder /usr/src/yquake2/release/ /opt/quake2/
+COPY --from=builder /usr/src/ctf/release/ /opt/quake2/ctf/
+COPY --from=builder /usr/src/xatrix/release/ /opt/quake2/xatrix/
+COPY --from=builder /usr/src/rogue/release/ /opt/quake2/rogue/
+COPY --from=builder /usr/src/zaero/release/ /opt/quake2/zaero/
+COPY --from=builder /usr/src/slightmechanicaldestruction/release/ /opt/quake2/smd/
+COPY --from=builder /usr/src/3zb2-zigflag/release/ /opt/quake2/3zb2/
+COPY --from=builder /usr/src/yquake2/stuff/yq2.cfg /opt/quake2-data/baseq2/
+COPY --from=builder /usr/src/yquake2/stuff/mapfixes/baseq2/ /opt/quake2-data/baseq2/maps/
+COPY --from=builder /usr/src/yquake2/stuff/mapfixes/juggernaut/ /opt/quake2-data/jugfull/maps/
+COPY --from=builder /usr/src/xatrix/stuff/mapfixes/ /opt/quake2-data/xatrix/maps/
+COPY --from=builder /usr/src/rogue/stuff/mapfixes/ /opt/quake2-data/rogue/maps/
+COPY --from=builder /usr/src/zaero/stuff/mapfixes/ /opt/quake2-data/zaero/maps/
+COPY --from=builder /usr/src/3zb2-zigflag/3zb2/ /opt/quake2-data/3zb2/
+COPY --from=builder /usr/src/q2admin-nxmod/release/ /opt/quake2-data/q2admin/
+COPY --from=builder /usr/src/pakextract/pakextract /usr/local/bin/
+COPY override /
+
+RUN echo "====== SETUP Q2ADMIN ======" \
  && cp /opt/quake2/baseq2/game.so /opt/quake2/baseq2/game.real.so \
  && cp /opt/quake2/3zb2/game.so /opt/quake2/3zb2/game.real.so \
  && cp /opt/quake2/ctf/game.so /opt/quake2/ctf/game.real.so \
  && cp /opt/quake2/xatrix/game.so /opt/quake2/xatrix/game.real.so \
  && cp /opt/quake2/rogue/game.so /opt/quake2/rogue/game.real.so \
  && cp /opt/quake2/zaero/game.so /opt/quake2/zaero/game.real.so \
- && cp /opt/quake2/smd/game.so /opt/quake2/smd/game.real.so \
- && mkdir -p /mnt/shared \
- && cd /usr/src && rm -rf /usr/src/* \
- && apk del --purge .build-quake2
+ && cp /opt/quake2/smd/game.so /opt/quake2/smd/game.real.so
 
-RUN echo "====== COMPILE Q2ADMIN ======" \
- && apk add --no-cache --virtual .build-q2admin build-base \
-  clang curl-dev \
-  git \
- && git -C /usr/src clone --single-branch --depth=1 https://github.com/cee-studio/orca.git && cd /usr/src/orca \
- && make discord github && make install \
- && git -C /usr/src clone --single-branch --depth=1 https://code.nephatrine.net/nephatrine/q2admin-nxmod.git && cd /usr/src/q2admin-nxmod \
- && make && mv release /opt/quake2-data/q2admin \
- && mv *.txt *.json /opt/quake2-data/q2admin/ \
- && cd /usr/src && rm -rf /usr/src/* /usr/local/include/orca /usr/local/lib/*.a \
- && apk del --purge .build-q2admin
-
-COPY override /
 EXPOSE 27910/udp

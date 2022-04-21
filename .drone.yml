@@ -1,79 +1,48 @@
 ---
 kind: pipeline
+type: exec
 name: default
 
+platform:
+  os: linux
+  arch: amd64
+
 steps:
-- name: local-latest
-  image: plugins/docker
-  settings:
-    custom_dns: 192.168.20.1
-    registry: pdr.nephatrine.net
-    repo: pdr.nephatrine.net/nephatrine/quake2-server
-    cache_from:
-      - "pdr.nephatrine.net/nephatrine/quake2-server:latest"
-    tags:
-      - latest
-    username:
+- name: build
+  environment:
+    PDR_USER:
       from_secret: docker-user-pdr
-    password:
+    PDR_PASS:
       from_secret: docker-pass-pdr
-- name: remote-latest
-  image: plugins/docker
-  settings:
-    custom_dns: 192.168.20.1
-    repo: nephatrine/quake2-server
-    cache_from:
-      - "pdr.nephatrine.net/nephatrine/quake2-server:latest"
-      - "nephatrine/quake2-server:latest"
-    tags:
-      - latest
-    username:
+  commands:
+  - docker build -t pdr.nephatrine.net/nephatrine/quake2-server:cached --target builder .
+  - docker build -t pdr.nephatrine.net/nephatrine/quake2-server:latest .
+  - docker build -t pdr.nephatrine.net/nephatrine/quake2-server:nginx . -d Dockerfile.nginx
+  - docker login -p "$PDR_PASS" -u "$PDR_USER" pdr.nephatrine.net
+  - docker push pdr.nephatrine.net/nephatrine/quake2-server:latest
+  - docker push pdr.nephatrine.net/nephatrine/quake2-server:nginx
+  - docker logout pdr.nephatrine.net
+- name: publish
+  environment:
+    DOCKER_USER:
       from_secret: docker-user
-    password:
+    DOCKER_PASS:
       from_secret: docker-pass
+  commands:
+  - docker tag pdr.nephatrine.net/nephatrine/quake2-server:latest nephatrine/quake2-server:latest
+  - docker tag pdr.nephatrine.net/nephatrine/quake2-server:nginx nephatrine/quake2-server:nginx
+  - docker login -p "$DOCKER_PASS" -u "$DOCKER_USER"
+  - docker push -a nephatrine/quake2-server
+  - docker logout
   depends_on:
-  - local-latest
-- name: local-nginx
-  image: plugins/docker
-  settings:
-    custom_dns: 192.168.20.1
-    registry: pdr.nephatrine.net
-    repo: pdr.nephatrine.net/nephatrine/quake2-server
-    cache_from:
-      - "pdr.nephatrine.net/nephatrine/quake2-server:nginx"
-    dockerfile: Dockerfile.nginx
-    tags:
-      - nginx
-    username:
-      from_secret: docker-user-pdr
-    password:
-      from_secret: docker-pass-pdr
-  depends_on:
-  - remote-latest
-- name: remote-nginx
-  image: plugins/docker
-  settings:
-    custom_dns: 192.168.20.1
-    repo: nephatrine/quake2-server
-    cache_from:
-      - "pdr.nephatrine.net/nephatrine/quake2-server:nginx"
-      - "nephatrine/quake2-server:nginx"
-    dockerfile: Dockerfile.nginx
-    tags:
-      - nginx
-    username:
-      from_secret: docker-user
-    password:
-      from_secret: docker-pass
-  depends_on:
-  - local-nginx
+  - build
 
 ---
 kind: pipeline
-name: after
+name: notify
 
 steps:
-- name: notify
+- name: notify-status
   image: appleboy/drone-discord
   failure: ignore
   settings:
@@ -95,6 +64,6 @@ trigger:
 
 ---
 kind: signature
-hmac: 8f6ed74463d7900b81b4cf0fc231e7f1892bd3f9961b4035c3be3262c6ca7f8e
+hmac: 7456b29c8c71178364f6004040961b7631b3ff047bc91eb57ea43f655fd195a6
 
 ...

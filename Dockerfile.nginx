@@ -1,17 +1,16 @@
-FROM nephatrine/quake2-server:latest
+FROM pdr.nephatrine.net/nephatrine/quake2-server:latest
 
-FROM nephatrine/nginx-ssl:latest
+FROM pdr.nephatrine.net/nephatrine/nginx-ssl:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
-RUN echo "====== INSTALL TOOLS ======" \
- && apk add --no-cache \
-  libcurl \
-  screen sdl2
+RUN echo "====== INSTALL PACKAGES ======" \
+ && apk add --no-cache libcurl screen sdl2
+
+ENV QUAKE2_MIRROR=true
 
 COPY --from=0 /opt/quake2 /opt/quake2
 COPY --from=0 /opt/quake2-data /opt/quake2-data
 COPY --from=0 /usr/local/bin/pakextract /usr/local/bin/pakextract
-ENV QUAKE2_MIRROR=true
-
 COPY override /
+
 EXPOSE 80/tcp 443/tcp 27910/udp
