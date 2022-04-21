@@ -17,7 +17,7 @@ steps:
   commands:
   - docker build -t pdr.nephatrine.net/nephatrine/quake2-server:cached --target builder .
   - docker build -t pdr.nephatrine.net/nephatrine/quake2-server:latest .
-  - docker build -t pdr.nephatrine.net/nephatrine/quake2-server:nginx . -d Dockerfile.nginx
+  - docker build -t pdr.nephatrine.net/nephatrine/quake2-server:nginx . -f Dockerfile.nginx
   - docker login -p "$PDR_PASS" -u "$PDR_USER" pdr.nephatrine.net
   - docker push pdr.nephatrine.net/nephatrine/quake2-server:latest
   - docker push pdr.nephatrine.net/nephatrine/quake2-server:nginx
@@ -64,6 +64,6 @@ trigger:
 
 ---
 kind: signature
-hmac: 7456b29c8c71178364f6004040961b7631b3ff047bc91eb57ea43f655fd195a6
+hmac: 6984c1ffa490127c5ec83b66703ba8e39df756c2aeba4765457efa3a943906df
 
 ...
