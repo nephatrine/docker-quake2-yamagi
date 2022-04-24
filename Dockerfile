@@ -11,8 +11,6 @@ RUN git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/z
 RUN git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/slightmechanicaldestruction.git
 RUN git -C /usr/src clone --single-branch --depth=1 https://github.com/DirtBagXon/3zb2-zigflag.git
 RUN git -C /usr/src clone --single-branch --depth=1 https://github.com/yquake2/pakextract.git
-RUN git -C /usr/src clone --single-branch --depth=1 https://github.com/cee-studio/orca.git
-RUN git -C /usr/src clone --single-branch --depth=1 https://code.nephatrine.net/nephatrine/q2admin-nxmod.git
 
 RUN echo "====== COMPILE QUAKE II ======" \
  && cd /usr/src/yquake2 \
@@ -35,15 +33,6 @@ RUN echo "====== COMPILE MODS ======" \
 RUN echo "====== COMPILE TOOLS ======" \
  && cd /usr/src/pakextract \
  && make
-RUN echo "====== COMPILE Q2ADMIN ======" \
- && cd /usr/src/orca \
- && make discord github \
- && make install \
- && cd /usr/src/q2admin-nxmod \
- && make \
- && mv *.txt *.json release/
-
-# rm -rf /usr/src/* /usr/local/include/orca /usr/local/lib/*.a \
 
 FROM pdr.nephatrine.net/nephatrine/alpine-s6:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
@@ -66,17 +55,21 @@ COPY --from=builder /usr/src/xatrix/stuff/mapfixes/ /opt/quake2-data/xatrix/maps
 COPY --from=builder /usr/src/rogue/stuff/mapfixes/ /opt/quake2-data/rogue/maps/
 COPY --from=builder /usr/src/zaero/stuff/mapfixes/ /opt/quake2-data/zaero/maps/
 COPY --from=builder /usr/src/3zb2-zigflag/3zb2/ /opt/quake2-data/3zb2/
-COPY --from=builder /usr/src/q2admin-nxmod/release/ /opt/quake2-data/q2admin/
 COPY --from=builder /usr/src/pakextract/pakextract /usr/local/bin/
 COPY override /
 
 RUN echo "====== SETUP Q2ADMIN ======" \
+ && wget -O /tmp/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz https://files.nephatrine.net/archives/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz \
+ && wget -O /tmp/q2admin-nxmod_noarch.tar.gz https://files.nephatrine.net/archives/q2admin-nxmod_noarch.tar.gz \
+ && tar -C /opt/quake2-data/q2admin -xvzf /tmp/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz \
+ && tar -C /opt/quake2-data/q2admin -xvzf /tmp/q2admin-nxmod_noarch.tar.gz \
  && cp /opt/quake2/baseq2/game.so /opt/quake2/baseq2/game.real.so \
  && cp /opt/quake2/3zb2/game.so /opt/quake2/3zb2/game.real.so \
  && cp /opt/quake2/ctf/game.so /opt/quake2/ctf/game.real.so \
  && cp /opt/quake2/xatrix/game.so /opt/quake2/xatrix/game.real.so \
  && cp /opt/quake2/rogue/game.so /opt/quake2/rogue/game.real.so \
  && cp /opt/quake2/zaero/game.so /opt/quake2/zaero/game.real.so \
- && cp /opt/quake2/smd/game.so /opt/quake2/smd/game.real.so
+ && cp /opt/quake2/smd/game.so /opt/quake2/smd/game.real.so \
+ && rm -f /tmp/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz /tmp/q2admin-nxmod_noarch.tar.gz
 
 EXPOSE 27910/udp
