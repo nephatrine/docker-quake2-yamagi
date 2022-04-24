@@ -58,18 +58,13 @@ COPY --from=builder /usr/src/3zb2-zigflag/3zb2/ /opt/quake2-data/3zb2/
 COPY --from=builder /usr/src/pakextract/pakextract /usr/local/bin/
 COPY override /
 
-RUN echo "====== SETUP Q2ADMIN ======" \
- && wget -O /tmp/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz https://files.nephatrine.net/archives/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz \
- && wget -O /tmp/q2admin-nxmod_noarch.tar.gz https://files.nephatrine.net/archives/q2admin-nxmod_noarch.tar.gz \
- && tar -C /opt/quake2-data/q2admin -xvzf /tmp/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz \
- && tar -C /opt/quake2-data/q2admin -xvzf /tmp/q2admin-nxmod_noarch.tar.gz \
+RUN echo "====== PREP FOR Q2ADMIN ======" \
  && cp /opt/quake2/baseq2/game.so /opt/quake2/baseq2/game.real.so \
  && cp /opt/quake2/3zb2/game.so /opt/quake2/3zb2/game.real.so \
  && cp /opt/quake2/ctf/game.so /opt/quake2/ctf/game.real.so \
  && cp /opt/quake2/xatrix/game.so /opt/quake2/xatrix/game.real.so \
  && cp /opt/quake2/rogue/game.so /opt/quake2/rogue/game.real.so \
  && cp /opt/quake2/zaero/game.so /opt/quake2/zaero/game.real.so \
- && cp /opt/quake2/smd/game.so /opt/quake2/smd/game.real.so \
- && rm -f /tmp/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz /tmp/q2admin-nxmod_noarch.tar.gz
+ && cp /opt/quake2/smd/game.so /opt/quake2/smd/game.real.so
 
 EXPOSE 27910/udp

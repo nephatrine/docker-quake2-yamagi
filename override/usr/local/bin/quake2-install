@@ -132,14 +132,19 @@ if [[ -d /opt/quake2-data/3zb2 ]]; then
   /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/3zb2/* /mnt/config/data/quake2/3zb2/
 fi
 
-# Q2ADMIN
+# DOWNLOAD Q2ADMIN
 
+if [[ ! -d /mnt/config/data/quake2/q2admin ]]; then
+  /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data/quake2/q2admin
+fi
+if [[ ! -e /mnt/config/data/quake2/q2admin/game.so ]]; then
+  /usr/bin/wget -O /tmp/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz https://files.nephatrine.net/archives/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz \
+   && /command/s6-setuidgid guardian /bin/tar -C /mnt/config/data/quake2/q2admin -xvzf /tmp/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz
+  /usr/bin/wget -O /tmp/q2admin-nxmod_noarch.tar.gz https://files.nephatrine.net/archives/q2admin-nxmod_noarch.tar.gz \
+   && /command/s6-setuidgid guardian /bin/tar -C /mnt/config/data/quake2/q2admin -xvzf /tmp/q2admin-nxmod_noarch.tar.gz
+fi
 if [[ -d /opt/quake2-data/q2admin ]]; then
-  if [[ ! -d /mnt/config/data/quake2/q2admin ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data/quake2/q2admin
-  fi
   /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/q2admin/* /mnt/config/data/quake2/q2admin/
-  /command/s6-setuidgid guardian /bin/cp /opt/quake2-data/q2admin/game.so /mnt/config/data/quake2/q2admin/
 fi
 
 # COPY YAMAGI FIXES OVER
