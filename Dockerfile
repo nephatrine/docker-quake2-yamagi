@@ -1,4 +1,4 @@
-FROM pdr.nephatrine.net/nephatrine/alpine-builder:latest AS builder
+FROM nephatrine/alpine:builder AS builder
 
 RUN echo "====== INSTALL LIBRARIES ======" \
  && apk add --no-cache curl-dev openssl-dev sdl2-dev
@@ -34,7 +34,7 @@ RUN echo "====== COMPILE TOOLS ======" \
  && cd /usr/src/pakextract \
  && make
 
-FROM pdr.nephatrine.net/nephatrine/alpine-s6:latest
+FROM nephatrine/alpine-s6:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
 RUN echo "====== INSTALL PACKAGES ======" \
