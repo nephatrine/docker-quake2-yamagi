@@ -20,7 +20,9 @@ jobs:
           username: ${{ gitea.actor }}
           password: ${{ secrets.PACKAGER_TOKEN }}
       - name: Docker Push
-        run: docker push code.nephatrine.net/nephnet/quake2-yamagi:${{ gitea.ref_name }}-amd64
+        run: |
+          docker push code.nephatrine.net/nephnet/quake2-yamagi:${{ gitea.ref_name }}-amd64
+          docker push code.nephatrine.net/nephnet/quake2-yamagi:${{ gitea.ref_name }}-nginx-amd64
       - name: Notify Discord
         uses: actions/discord-status@v1
         if: always()
@@ -45,7 +47,9 @@ jobs:
           username: ${{ gitea.actor }}
           password: ${{ secrets.PACKAGER_TOKEN }}
       - name: Docker Push
-        run: docker push code.nephatrine.net/nephnet/quake2-yamagi:${{ gitea.ref_name }}-arm64v8
+        run: |
+          docker push code.nephatrine.net/nephnet/quake2-yamagi:${{ gitea.ref_name }}-arm64v8
+          docker push code.nephatrine.net/nephnet/quake2-yamagi:${{ gitea.ref_name }}-nginx-arm64v8
       - name: Notify Discord
         uses: actions/discord-status@v1
         if: always()
@@ -70,7 +74,9 @@ jobs:
           username: ${{ gitea.actor }}
           password: ${{ secrets.PACKAGER_TOKEN }}
       - name: Docker Push
-        run: docker push code.nephatrine.net/nephnet/quake2-yamagi:${{ gitea.ref_name }}-armv7
+        run: |
+          docker push code.nephatrine.net/nephnet/quake2-yamagi:${{ gitea.ref_name }}-armv7
+          docker push code.nephatrine.net/nephnet/quake2-yamagi:${{ gitea.ref_name }}-nginx-armv7
       - name: Notify Discord
         uses: actions/discord-status@v1
         if: always()
@@ -95,7 +101,9 @@ jobs:
           username: ${{ gitea.actor }}
           password: ${{ secrets.PACKAGER_TOKEN }}
       - name: Docker Push
-        run: docker push code.nephatrine.net/nephnet/quake2-yamagi:${{ gitea.ref_name }}-riscv64
+        run: |
+          docker push code.nephatrine.net/nephnet/quake2-yamagi:${{ gitea.ref_name }}-riscv64
+          docker push code.nephatrine.net/nephnet/quake2-yamagi:${{ gitea.ref_name }}-nginx-riscv64
       - name: Notify Discord
         uses: actions/discord-status@v1
         if: always()
