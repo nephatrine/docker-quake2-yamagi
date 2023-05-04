@@ -1,3 +1,9 @@
-This is a precompiled version of q2admin for this system that should work with the engine on the container.
+This is a precompiled version of q2admin for this system that should work with
+the engine on the container.
 
-It is NOT enabled by default. To use it for one or more games, simply copy the game.so here into the game folder you want (renaming any existing game.so to game.real.so) and place the q2admin*.txt files in either the base data/quake2 folder or in the game folder. The baseq2, 3zb2, ctf, rogue, smd, xatrix, and zaero mods all have a game.real.so already contained within the container, so you can just copy the q2admin game.so over for those.
+It is NOT enabled by default. To use it for one or more games, simply copy the
+game.so here into the game folder you want (renaming any existing game.so to
+game.real.so) and place the q2admin*.txt files in either the base data/quake2
+folder or in the game folder. The baseq2, 3zb2, ctf, rogue, xatrix, zaero,
+lmctf, openffa, and opentdm mods all have a game.real.so already contained
+within the container, so you can just copy the q2admin game.so over for those.
