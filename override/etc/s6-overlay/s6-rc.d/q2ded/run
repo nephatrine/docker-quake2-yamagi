@@ -13,6 +13,19 @@ if ! /usr/bin/pgrep -f quakedock >/dev/null; then
     /bin/rm -f ${HOME}/.yq2/baseq2/qconsole.log
   fi
   
+  if [[ -d /mnt/shared/data/quake2/openffa/highscores ]]; then
+    /command/s6-setuidgid guardian /bin/mkdir -p /opt/quake2/openffa
+    /command/s6-setuidgid guardian /bin/cp -rvs /mnt/shared/data/quake2/openffa/highscores /opt/quake2/openffa/highscores
+  fi
+  if [[ -d /mnt/shared/data/quake2/openffa/mapcfg ]]; then
+    /command/s6-setuidgid guardian /bin/mkdir -p /opt/quake2/openffa
+    /command/s6-setuidgid guardian /bin/cp -rvs /mnt/shared/data/quake2/openffa/mapcfg /opt/quake2/openffa/mapcfg
+  fi
+  if [[ -d /mnt/shared/data/quake2/openffa/motd ]]; then
+    /command/s6-setuidgid guardian /bin/mkdir -p /opt/quake2/openffa
+    /command/s6-setuidgid guardian /bin/cp -rvs /mnt/shared/data/quake2/openffa/motd /opt/quake2/openffa/motd
+  fi
+
   if [[ -d /mnt/shared/data/quake2 ]]; then
     /command/s6-setuidgid guardian /usr/bin/screen -dmS quakedock ./q2ded -datadir /mnt/shared/data/quake2 +set basepath /mnt/shared/data/quake2 +set savepath /mnt/config/home/.yq2 ${GAME_START};
   else

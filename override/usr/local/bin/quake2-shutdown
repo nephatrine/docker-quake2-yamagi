@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [[ -d /opt/quake2/openffa/highscores ]]; then
+  /command/s6-setuidgid guardian /bin/mkdir -p /mnt/shared/data/quake2/openffa/highscores
+  /command/s6-setuidgid guardian /bin/cp -rvs /opt/quake2/openffa/highscores /mnt/shared/data/quake2/openffa/highscores
+fi
 if /usr/bin/pgrep -f quakedock >/dev/null; then
   /command/s6-setuidgid guardian /usr/bin/screen -S quakedock -X stuff "`echo -ne \"say QUAKE II SERVER SHUTTING DOWN!\r\"`"
   sleep 6
