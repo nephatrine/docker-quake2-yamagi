@@ -223,4 +223,4 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
-          repository: nephatrine/quake2
+          repository: nephatrine/quake2-server
