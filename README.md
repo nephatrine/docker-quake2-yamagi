@@ -1,22 +1,17 @@
-[Git](https://code.nephatrine.net/nephatrine/docker-quake2/src/branch/master) |
+[Git](https://code.nephatrine.net/NephNET/docker-quake2-yamagi/src/branch/master) |
 [Docker](https://hub.docker.com/r/nephatrine/quake2-server/) |
 [unRAID](https://code.nephatrine.net/nephatrine/unraid-containers)
-
-[![Build Status](https://ci.nephatrine.net/api/badges/nephatrine/docker-quake2/status.svg?ref=refs/heads/master)](https://ci.nephatrine.net/nephatrine/docker-quake2)
 
 # Quake II Server
 
 This docker image contains a Quake II dedicated server.
 
-If using the ``nginx`` tag, you can configure TLS the same way as the
-[nginx-ssl](https://code.nephatrine.net/nephatrine/docker-nginx-ssl) container.
-If part of a larger envinronment, we suggest using a separate container as a
-reverse proxy server and handle TLS there rather than here.
-
-- [Alpine Linux](https://alpinelinux.org/)
-- [Skarnet Software](https://skarnet.org/software/)
-- [S6 Overlay](https://github.com/just-containers/s6-overlay)
+- [Alpine Linux](https://alpinelinux.org/) w/ [S6 Overlay](https://github.com/just-containers/s6-overlay)
+- [NGINX](https://www.nginx.com/) w/ [CertBot](https://certbot.eff.org/) (with ``nginx`` tags)
 - [Yamagi Quake II](https://yamagi.org/quake2/)
+
+The ``nginx`` tags will provide an HTTP(S) mirror of the game files for clients
+that support HTTP downloads.
 
 You can spin up a quick temporary test container like this:
 
@@ -27,7 +22,6 @@ docker run --rm -p 27910:27910 -it nephatrine/quake2-server:latest /bin/bash
 ## Docker Tags
 
 - **nephatrine/quake2-server:latest**: Yamagi Quake II / Alpine Latest
-- **nephatrine/quake2-server:nginx**: Yamagi Quake II / NGINX Mainline / Alpine Latest
 
 ## Configuration Variables
 
@@ -41,8 +35,9 @@ configuration files.
 - ``PGID``: Mount Owner GID (*100*)
 - ``TZ``: System Timezone (*America/New_York*)
 
-If using the ``nginx`` tag, you can use the additional configuration options documented
-for the [nginx-ssl](https://code.nephatrine.net/nephatrine/docker-nginx-ssl) container.
+If using the ``nginx`` tags, you can use the additional configuration options
+documented for the [nginx-ssl](https://code.nephatrine.net/nephatrine/docker-nginx-ssl)
+container.
 
 ## Persistent Mounts
 

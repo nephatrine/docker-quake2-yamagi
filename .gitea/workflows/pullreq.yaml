@@ -1,0 +1,14 @@
+name: Build Container Image
+run-name: ${{ gitea.actor }} pushed to ${{ gitea.repository }}:${{ gitea.ref_name }}
+on:
+  pull_request:
+    types: [ opened, synchronize, ready_for_review ]
+jobs:
+  build:
+    if: gitea.actor == 'nephatrine' && gitea.event.pull_request.draft == false
+    runs-on: nephnet
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Docker Build
+        run: docker build --pull ${{ gitea.workspace }}

@@ -1,4 +1,4 @@
-Copyright © 2021 Daniel Wolf <<nephatrine@gmail.com>>
+Copyright © 2023 Daniel Wolf <<nephatrine@gmail.com>>
 
 **Permission to use, copy, modify, and distribute this software for any
 purpose with or without fee is hereby granted, provided that the above

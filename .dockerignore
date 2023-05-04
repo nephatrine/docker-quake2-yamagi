@@ -1,5 +1,6 @@
 .drone.yml
 .git
+.gitea
 .gitignore
 LICENSE.md
 README.md
