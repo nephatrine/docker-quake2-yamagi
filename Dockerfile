@@ -36,7 +36,7 @@ RUN echo "====== COMPILE 3ZB2 ======" \
  && mv 3zb2/pak10.pak 3zb2/pak6.pak
 RUN echo "====== COMPILE LMCTF ======" \
  && cd /root/lmctf \
- && make -j3
+ && make -j3 && mv game*.so game.so
 RUN echo "====== COMPILE OPENFFA ======" \
  && cd /root/openffa \
  && make -j3 && mv game*.so game.so
@@ -71,7 +71,7 @@ COPY --from=builder /root/3zb2-zigflag/release/ /opt/quake2/3zb2/
 COPY --from=builder /root/3zb2-zigflag/3zb2/ /opt/quake2-data/3zb2/
 COPY --from=builder /root/openffa/game.so /opt/quake2/openffa/
 COPY --from=builder /root/opentdm/game.so /opt/quake2/opentdm/
-COPY --from=builder /root/3zb2-zigflag/release/ /opt/quake2/3zb2/
+COPY --from=builder /root/lmctf/game.so /opt/quake2/lmctf/
 COPY override /
 
 RUN echo "====== PREP FOR Q2ADMIN ======" \
@@ -82,7 +82,8 @@ RUN echo "====== PREP FOR Q2ADMIN ======" \
  && cp /opt/quake2/zaero/game.so /opt/quake2/zaero/game.real.so \
  && cp /opt/quake2/3zb2/game.so /opt/quake2/3zb2/game.real.so \
  && cp /opt/quake2/openffa/game.so /opt/quake2/openffa/game.real.so \
- && cp /opt/quake2/opentdm/game.so /opt/quake2/opentdm/game.real.so
+ && cp /opt/quake2/opentdm/game.so /opt/quake2/opentdm/game.real.so \
+ && cp /opt/quake2/lmctf/game.so /opt/quake2/lmctf/game.real.so
 
 EXPOSE 27910/udp
 
@@ -94,9 +95,9 @@ RUN echo "====== INSTALL PACKAGES ======" \
 
 ENV QUAKE2_MIRROR=true
 
-COPY --from=builder /root/pakextract/pakextract /usr/local/bin/
+COPY --from=dedicated /usr/local/bin /usr/local/bin
 COPY --from=dedicated /opt/quake2 /opt/quake2
 COPY --from=dedicated /opt/quake2-data /opt/quake2-data
-COPY override /
+COPY override/etc /etc
 
 EXPOSE 80/tcp 443/tcp 27910/udp
