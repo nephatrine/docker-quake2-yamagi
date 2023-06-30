@@ -16,37 +16,40 @@ RUN git -C /root clone --single-branch --depth=1 https://github.com/yquake2/pake
 
 RUN echo "====== COMPILE QUAKE II ======" \
  && cd /root/yquake2 \
- && make -j3 server game \
+ && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) server game \
  && cd /root/ctf \
- && make -j3
+ && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 RUN echo "====== COMPILE EXPANSIONS ======" \
  && cd /root/xatrix \
- && make -j3 \
+ && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
  && cd /root/rogue \
- && make -j3 \
+ && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
  && cd /root/zaero \
- && make -j3
+ && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 RUN echo "====== COMPILE TOOLS ======" \
  && cd /root/pakextract \
- && make -j3
+ && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 RUN echo "====== COMPILE 3ZB2 ======" \
  && cd /root/3zb2-zigflag \
  && if [ ! "$(uname)" = "x86_64" ]; then sed -i "s~-msse2 -mfpmath=sse~~g" Makefile; fi \
- && make -j3 \
+ && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
  && mv 3zb2/pak10.pak 3zb2/pak6.pak
 RUN echo "====== COMPILE LMCTF ======" \
  && cd /root/lmctf \
- && make -j3 && mv game*.so game.so
+ && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
+ && mv game*.so game.so
 RUN echo "====== COMPILE OPENFFA ======" \
  && cd /root/openffa \
- && make -j3 && mv game*.so game.so
+ && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
+ && mv game*.so game.so
 RUN echo "====== COMPILE OPENTDM ======" \
  && cd /root/opentdm \
  && sed -i "s~shell pkg-config libcurl --cflags~shell curl-config --cflags~g" Makefile \
  && sed -i "s~shell pkg-config libcurl --libs~shell curl-config --libs~g" Makefile \
  && sed -i "s~-DCURL_STATICLIB~~g" Makefile \
  && sed -i 's~deps/[^ ]*~$(CURL_LIBS)~g' Makefile \
- && make -j3 && mv game*.so game.so
+ && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
+ && mv game*.so game.so
 
 FROM nephatrine/alpine-s6:latest AS dedicated
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
