@@ -3,14 +3,19 @@ FROM nephatrine/nxbuilder:alpine AS builder
 RUN echo "====== INSTALL LIBRARIES ======" \
  && apk add --no-cache mesa-dev sdl2-dev
 
-RUN git -C /root clone --single-branch --depth=1 https://github.com/yquake2/yquake2.git
+ARG YQUAKE2_VERSION=QUAKE2_8_20
+ARG CTF_VERSION=CTF_1_09
+ARG ROGUE_VERSION=ROGUE_2_10
+ARG XATRIX_VERSION=XATRIX_2_11
+
+RUN git -C /root clone -b "$YQUAKE2_VERSION" --single-branch --depth=1 https://github.com/yquake2/yquake2.git
 RUN git -C /root clone --single-branch --depth=1 https://github.com/DirtBagXon/3zb2-zigflag.git
 RUN git -C /root clone --single-branch --depth=1 https://github.com/packetflinger/lmctf.git
 RUN git -C /root clone --single-branch --depth=1 https://github.com/packetflinger/openffa.git
 RUN git -C /root clone --single-branch --depth=1 https://github.com/packetflinger/opentdm.git
-RUN git -C /root clone --single-branch --depth=1 https://github.com/yquake2/ctf.git
-RUN git -C /root clone --single-branch --depth=1 https://github.com/yquake2/rogue.git
-RUN git -C /root clone --single-branch --depth=1 https://github.com/yquake2/xatrix.git
+RUN git -C /root clone -b "$CTF_VERSION" --single-branch --depth=1 https://github.com/yquake2/ctf.git
+RUN git -C /root clone -b "$ROGUE_VERSION" --single-branch --depth=1 https://github.com/yquake2/rogue.git
+RUN git -C /root clone -b "$XATRIX_VERSION" --single-branch --depth=1 https://github.com/yquake2/xatrix.git
 RUN git -C /root clone --single-branch --depth=1 https://github.com/yquake2/zaero.git
 RUN git -C /root clone --single-branch --depth=1 https://github.com/yquake2/pakextract.git
 
@@ -51,12 +56,12 @@ RUN echo "====== COMPILE OPENTDM ======" \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
  && mv game*.so game.so
 
-FROM nephatrine/alpine-s6:latest AS dedicated
+FROM nephatrine/alpine-s6:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
 RUN echo "====== INSTALL PACKAGES ======" \
  && apk add --no-cache libcurl screen sdl2 \
- && mkdir -p /mnt/shared
+ && mkdir -p /mnt/shared /mnt/mirror
 
 COPY --from=builder /root/pakextract/pakextract /usr/local/bin/
 COPY --from=builder /root/yquake2/release/ /opt/quake2/
@@ -89,18 +94,3 @@ RUN echo "====== PREP FOR Q2ADMIN ======" \
  && cp /opt/quake2/lmctf/game.so /opt/quake2/lmctf/game.real.so
 
 EXPOSE 27910/udp
-
-FROM nephatrine/nginx-ssl:latest
-LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
-
-RUN echo "====== INSTALL PACKAGES ======" \
- && apk add --no-cache libcurl screen sdl2
-
-ENV QUAKE2_MIRROR=true
-
-COPY --from=dedicated /usr/local/bin /usr/local/bin
-COPY --from=dedicated /opt/quake2 /opt/quake2
-COPY --from=dedicated /opt/quake2-data /opt/quake2-data
-COPY override/etc /etc
-
-EXPOSE 80/tcp 443/tcp 27910/udp

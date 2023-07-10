@@ -1,2 +1,2 @@
 #!/command/execlineb
-foreground { /bin/bash /usr/local/bin/quake2-shutdown }
+foreground { /command/with-contenv /bin/sh /usr/local/bin/quake2-shutdown }

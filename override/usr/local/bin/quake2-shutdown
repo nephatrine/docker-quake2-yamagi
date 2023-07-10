@@ -1,12 +1,27 @@
-#!/bin/bash
+#!/command/with-contenv /bin/sh
 
-if [[ -d /opt/quake2/openffa/highscores ]]; then
-  /command/s6-setuidgid guardian /bin/mkdir -p /mnt/shared/data/quake2/openffa/highscores
-  /command/s6-setuidgid guardian /bin/cp -rvs /opt/quake2/openffa/highscores /mnt/shared/data/quake2/openffa/highscores
+if [ -d /opt/quake2/openffa/highscores ]; then
+  if [ -z "${QUAKE2_DATA}" ]; then
+    if [ -n "${QUAKE2_INSTALL}" ] && [ ! "${QUAKE2_INSTALL}" = "true" ] && [ ! "${QUAKE2_INSTALL}" = "false" ]; then
+      export QUAKE2_DATA="${QUAKE2_INSTALL}"
+    else
+      export QUAKE2_DATA="/mnt/config"
+    fi
+  fi
+  if [ -z "${QUAKE2_DATA_SUBPATH}" ]; then
+    export QUAKE2_DATA_SUBPATH=/data/quake2
+  fi
+  if [[ ! -d "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/highscores" ]]; then
+    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/highscores"
+    if [[ -d "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/highscores" ]]; then
+      /command/s6-setuidgid guardian /bin/cp -Rv /opt/quake2/openffa/highscores/. "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/highscores/"
+      /bin/rm -rf /opt/quake2/openffa/highscores
+    fi
+  fi
 fi
 if /usr/bin/pgrep -f quakedock >/dev/null; then
-  /command/s6-setuidgid guardian /usr/bin/screen -S quakedock -X stuff "`echo -ne \"say QUAKE II SERVER SHUTTING DOWN!\r\"`"
+  /command/s6-setuidgid guardian /usr/bin/screen -S quakedock -X stuff "$(/bin/echo -ne \"say QUAKE II SERVER SHUTTING DOWN!\r\")"
   sleep 6
-  /command/s6-setuidgid guardian /usr/bin/screen -S quakedock -X stuff "`echo -ne \"quit\r\"`"
+  /command/s6-setuidgid guardian /usr/bin/screen -S quakedock -X stuff "$(/bin/echo -ne \"quit\r\")"
   sleep 2
 fi

@@ -1,2 +1,2 @@
 #!/command/execlineb
-foreground { /command/with-contenv /bin/bash /usr/local/bin/quake2-install }
+foreground { /command/with-contenv /bin/sh /usr/local/bin/quake2-install }

@@ -1,177 +1,196 @@
-#!/command/with-contenv /bin/bash
+#!/command/with-contenv /bin/sh
 
 if /usr/bin/pgrep -f quakedock >/dev/null; then
   exit 1
 fi
 
-if [[ -d /mnt/shared/data/quake2 ]]; then
-  cd /mnt/shared/data/quake2
-  /usr/bin/find . -type f -name 'game*.so' -exec /bin/cp --parents {} /opt/quake2/ \;
-  exit 0
-elif [[ -d /mnt/config/data/quake2 ]]; then
-  cd /mnt/config/data/quake2
+if [ -z "${QUAKE2_DATA}" ]; then
+  if [ -n "${QUAKE2_INSTALL}" ] && [ ! "${QUAKE2_INSTALL}" = "true" ] && [ ! "${QUAKE2_INSTALL}" = "false" ]; then
+    export QUAKE2_DATA="${QUAKE2_INSTALL}"
+  else
+    export QUAKE2_DATA="/mnt/config"
+  fi
+fi
+if [ -z "${QUAKE2_INSTALL}" ] && [ "${QUAKE2_DATA}" = "/mnt/config" ]; then
+  export QUAKE2_INSTALL="${QUAKE2_DATA}"
+elif [ "${QUAKE2_INSTALL}" = "true" ]; then
+  export QUAKE2_INSTALL="${QUAKE2_DATA}"
+elif [ "${QUAKE2_INSTALL}" = "false" ]; then
+  export QUAKE2_INSTALL=
+fi
+
+if [ -z "${QUAKE2_DATA_SUBPATH}" ]; then
+  export QUAKE2_DATA_SUBPATH=/data/quake2
+fi
+
+# Copy Mods Locally
+
+if [ -d "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}" ]; then
+  cd "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}" || exit 1
   /usr/bin/find . -type f -name 'game*.so' -exec /bin/cp --parents {} /opt/quake2/ \;
 fi
 
-# QUAKE II
+# Install Quake II
 
-if [[ ! -d /mnt/config/data/quake2/baseq2 ]]; then
-  if [[ ! -f /tmp/q2-314-demo-x86.exe ]]; then
-    /usr/bin/wget -qO /tmp/q2-314-demo-x86.exe https://files.nephatrine.net/archives/idstuff/quake2/q2-314-demo-x86.exe
+if [ -n "${QUAKE2_INSTALL}" ] && [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2" ]; then
+  if [ ! -f /tmp/q2-314-demo-x86.exe ]; then
+    /usr/bin/wget -qO /tmp/q2-314-demo-x86.exe https://nephatrine.net/backup/quake2/q2-314-demo-x86.exe
   fi
-  if [[ ! -f /tmp/q2-3.20-x86-full-ctf.exe ]]; then
-    /usr/bin/wget -qO /tmp/q2-3.20-x86-full-ctf.exe https://files.nephatrine.net/archives/idstuff/quake2/q2-3.20-x86-full-ctf.exe
+  if [ ! -f /tmp/q2-3.20-x86-full-ctf.exe ]; then
+    /usr/bin/wget -qO /tmp/q2-3.20-x86-full-ctf.exe https://nephatrine.net/backup/quake2/q2-3.20-x86-full-ctf.exe
   fi
-  if [[ ! -f /tmp/match1.tar.gz ]]; then
-    /usr/bin/wget -qO /tmp/match1.tar.gz https://files.nephatrine.net/archives/idstuff/quake2/maps/match1.tar.gz
+  if [ ! -f /tmp/match1.tar.gz ]; then
+    /usr/bin/wget -qO /tmp/match1.tar.gz https://nephatrine.net/backup/quake2/maps/match1.tar.gz
   fi
-  if [[ ! -f /tmp/dm_64.tar.gz ]]; then
-    /usr/bin/wget -qO /tmp/dm_64.tar.gz https://files.nephatrine.net/archives/idstuff/quake2/maps/dm_64.tar.gz
+  if [ ! -f /tmp/dm_64.tar.gz ]; then
+    /usr/bin/wget -qO /tmp/dm_64.tar.gz https://nephatrine.net/backup/quake2/maps/dm_64.tar.gz
   fi
-  if [[ -f /tmp/q2-314-demo-x86.exe ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data/quake2/baseq2
-    /command/s6-setuidgid guardian /usr/bin/unzip -jq -d /mnt/config/data/quake2/baseq2/ /tmp/q2-314-demo-x86.exe \
-     Install/Data/baseq2/pak0.pak \
-     Install/Data/DOCS/license.txt
+  if [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2/maps" ]; then
+    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2/maps"
   fi
-  if [[ -f /tmp/q2-3.20-x86-full-ctf.exe ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data/quake2/baseq2
-    /command/s6-setuidgid guardian /usr/bin/unzip -jq -d /mnt/config/data/quake2/baseq2/ /tmp/q2-3.20-x86-full-ctf.exe \
-     baseq2/maps.lst \
-     baseq2/pak1.pak \
-     baseq2/pak2.pak
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2" ] && [ -f /tmp/q2-314-demo-x86.exe ]; then
+    /command/s6-setuidgid guardian /usr/bin/unzip -jq -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2/" /tmp/q2-314-demo-x86.exe \
+     Install/Data/baseq2/pak0.pak Install/Data/DOCS/license.txt
+  fi
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2" ] && [ -f /tmp/q2-3.20-x86-full-ctf.exe ]; then
+    /command/s6-setuidgid guardian /usr/bin/unzip -jq -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2/" /tmp/q2-3.20-x86-full-ctf.exe \
+     baseq2/maps.lst baseq2/pak1.pak baseq2/pak2.pak
     /command/s6-setuidgid guardian /bin/mkdir /tmp/q2-3.20-x86-full-ctf
     /command/s6-setuidgid guardian /usr/bin/unzip -d /tmp/q2-3.20-x86-full-ctf/ /tmp/q2-3.20-x86-full-ctf.exe
-    /command/s6-setuidgid guardian /bin/mv /tmp/q2-3.20-x86-full-ctf/baseq2/players /mnt/config/data/quake2/baseq2/
+    /command/s6-setuidgid guardian /bin/mv /tmp/q2-3.20-x86-full-ctf/baseq2/players "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2/"
     /bin/rm -rf /tmp/q2-3.20-x86-full-ctf
   fi
-  if [[ -f /tmp/match1.tar.gz ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data/quake2/baseq2
-    /command/s6-setuidgid guardian /bin/tar x -C /mnt/config/data/quake2/baseq2/ -zf /tmp/match1.tar.gz \
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2" ] &&[  -f /tmp/match1.tar.gz ]; then
+    /command/s6-setuidgid guardian /bin/tar x -C "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2/" -zf /tmp/match1.tar.gz \
      pak3.pak
   fi
-  if [[ -f /tmp/dm_64.tar.gz ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data/quake2/baseq2/maps
-    /command/s6-setuidgid guardian /bin/tar x -C /mnt/config/data/quake2/baseq2/maps/ -zf /tmp/dm_64.tar.gz \
-     base64.bsp \
-     city64.bsp \
-     sewer64.bsp
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2/maps" ] && [ -f /tmp/dm_64.tar.gz ]; then
+    /command/s6-setuidgid guardian /bin/tar x -C "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2/maps/" -zf /tmp/dm_64.tar.gz \
+     base64.bsp city64.bsp sewer64.bsp
   fi
 fi
 
-# CAPTURE THE FLAG
+# Install Capture The Flag
 
-if [[ ! -d /mnt/config/data/quake2/ctf ]]; then
-  if [[ ! -f /tmp/q2-3.20-x86-full-ctf.exe ]]; then
-    /usr/bin/wget -qO /tmp/q2-3.20-x86-full-ctf.exe https://files.nephatrine.net/archives/idstuff/quake2/q2-3.20-x86-full-ctf.exe
+if [ -n "${QUAKE2_INSTALL}" ] && [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/ctf" ]; then
+  if [ ! -f /tmp/q2-3.20-x86-full-ctf.exe ]; then
+    /usr/bin/wget -qO /tmp/q2-3.20-x86-full-ctf.exe https://nephatrine.net/backup/quake2/q2-3.20-x86-full-ctf.exe
   fi
-  if [[ ! -f /tmp/q2ctf150upgrade.zip ]]; then
-    /usr/bin/wget -qO /tmp/q2ctf150upgrade.zip https://files.nephatrine.net/archives/idstuff/quake2/ctf/q2ctf150upgrade.zip
+  if [ ! -f /tmp/q2ctf150upgrade.zip ]; then
+    /usr/bin/wget -qO /tmp/q2ctf150upgrade.zip https://nephatrine.net/backup/quake2/q2ctf150upgrade.zip
   fi
-  if [[ ! -f /tmp/q2ctf4a.tar.gz ]]; then
-    /usr/bin/wget -qO /tmp/q2ctf4a.tar.gz https://files.nephatrine.net/archives/idstuff/quake2/maps/q2ctf4a.tar.gz
+  if [ ! -f /tmp/q2ctf4a.tar.gz ]; then
+    /usr/bin/wget -qO /tmp/q2ctf4a.tar.gz https://nephatrine.net/backup/quake2/maps/q2ctf4a.tar.gz
   fi
-  if [[ -f /tmp/q2-3.20-x86-full-ctf.exe ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data/quake2/ctf
-    /command/s6-setuidgid guardian /usr/bin/unzip -jq -d /mnt/config/data/quake2/ctf/ /tmp/q2-3.20-x86-full-ctf.exe \
-     ctf/pak0.pak \
-     ctf/server.cfg
+  if [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/ctf/maps" ]; then
+    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/ctf/maps"
   fi
-  if [[ -f /tmp/q2ctf150upgrade.zip ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data/quake2/ctf
-    /command/s6-setuidgid guardian /usr/bin/unzip -jq -d /mnt/config/data/quake2/ctf/ /tmp/q2ctf150upgrade.zip \
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/ctf" ] && [ -f /tmp/q2-3.20-x86-full-ctf.exe ]; then
+    /command/s6-setuidgid guardian /usr/bin/unzip -jq -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/ctf/" /tmp/q2-3.20-x86-full-ctf.exe \
+     ctf/pak0.pak ctf/server.cfg
+  fi
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/ctf" ] && [ -f /tmp/q2ctf150upgrade.zip ]; then
+    /command/s6-setuidgid guardian /usr/bin/unzip -jq -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/ctf/" /tmp/q2ctf150upgrade.zip \
      pak1.pak
   fi
-  if [[ -f /tmp/q2ctf4a.tar.gz ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data/quake2/ctf/maps
-    /command/s6-setuidgid guardian /bin/tar x -C /mnt/config/data/quake2/ctf/maps/ -zf /tmp/q2ctf4a.tar.gz \
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/ctf/maps" ] && [ -f /tmp/q2ctf4a.tar.gz ]; then
+    /command/s6-setuidgid guardian /bin/tar x -C "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/ctf/maps/" -zf /tmp/q2ctf4a.tar.gz \
      q2ctf4a.bsp
   fi
 fi
 
-# ZAERO
+# Install Zaero Missionpack
 
-if [[ ! -d /mnt/config/data/quake2/zaero ]]; then
-  if [[ ! -f /tmp/zaerodemo.zip ]]; then
-    /usr/bin/wget -qO /tmp/zaerodemo.zip https://files.nephatrine.net/archives/teamevolve/zaerodemo.zip
+if [ -n "${QUAKE2_INSTALL}" ] && [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/zaero" ]; then
+  if [ ! -f /tmp/zaerodemo.zip ]; then
+    /usr/bin/wget -qO /tmp/zaerodemo.zip https://nephatrine.net/backup/teamevolve/zaerodemo.zip
   fi
-  if [[ ! -f /tmp/zaerodm.zip ]]; then
-    /usr/bin/wget -qO /tmp/zaerodm.zip https://files.nephatrine.net/archives/teamevolve/zaerodm.zip
+  if [ ! -f /tmp/zaerodm.zip ]; then
+    /usr/bin/wget -qO /tmp/zaerodm.zip https://nephatrine.net/backup/teamevolve/zaerodm.zip
   fi
-  if [[ ! -f /tmp/zaero-1.1.zip ]]; then
-    /usr/bin/wget -qO /tmp/zaero-1.1.zip https://files.nephatrine.net/archives/teamevolve/zaero-1.1.zip
+  if [ ! -f /tmp/zaero-1.1.zip ]; then
+    /usr/bin/wget -qO /tmp/zaero-1.1.zip https://nephatrine.net/backup/teamevolve/zaero-1.1.zip
   fi
-  if [[ -f /tmp/zaerodemo.zip ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data/quake2/zaero
-    /command/s6-setuidgid guardian /usr/bin/unzip -jq -d /mnt/config/data/quake2/zaero/ /tmp/zaerodemo.zip \
-     zdemo/config.cfg \
-     zdemo/pak0.pak
+  if [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/zaero" ]; then
+    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/zaero"
+  fi
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/zaero" ] && [ -f /tmp/zaerodemo.zip ]; then
+    /command/s6-setuidgid guardian /usr/bin/unzip -jq -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/zaero/" /tmp/zaerodemo.zip \
+     zdemo/config.cfg zdemo/pak0.pak
     /command/s6-setuidgid guardian /bin/mkdir /tmp/zaerodemo
     /command/s6-setuidgid guardian /usr/bin/unzip -d /tmp/zaerodemo/ /tmp/zaerodemo.zip
-    /command/s6-setuidgid guardian /bin/mv /tmp/zaerodemo/zdemo/sprites /mnt/config/data/quake2/zaero/
+    /command/s6-setuidgid guardian /bin/mv /tmp/zaerodemo/zdemo/sprites "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/zaero/"
     /bin/rm -rf /tmp/zaerodemo
   fi
-  if [[ -f /tmp/zaero-1.1.zip ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data/quake2/zaero
-    /command/s6-setuidgid guardian /usr/bin/unzip -jq -d /mnt/config/data/quake2/zaero/ /tmp/zaero-1.1.zip \
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/zaero" ] && [ -f /tmp/zaero-1.1.zip ]; then
+    /command/s6-setuidgid guardian /usr/bin/unzip -jq -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/zaero/" /tmp/zaero-1.1.zip \
      pak1.pak
   fi
-  if [[ -f /tmp/zaerodm.zip ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data/quake2/zaero
-    /command/s6-setuidgid guardian /usr/bin/unzip -jq -d /mnt/config/data/quake2/zaero/ /tmp/zaerodm.zip \
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/zaero" ] && [ -f /tmp/zaerodm.zip ]; then
+    /command/s6-setuidgid guardian /usr/bin/unzip -jq -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/zaero/" /tmp/zaerodm.zip \
      pak2.pak
   fi
 fi
 
-# 3RD ZIGOCK BOT II
+# Create Other Mod Directories
 
-if [[ -d /opt/quake2-data/3zb2 ]]; then
-  if [[ ! -d /mnt/config/data/quake2/3zb2 ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data/quake2/3zb2
+if [ -n "${QUAKE2_INSTALL}" ]; then
+  if [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/3zb2" ]; then
+    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/3zb2"
   fi
-  /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/3zb2/* /mnt/config/data/quake2/3zb2/
-fi
-
-# DOWNLOAD Q2ADMIN
-
-if [[ && "$(uname)" == "x86_64" ]]; then
-  if [[ ! -d /mnt/config/data/quake2/q2admin ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data/quake2/q2admin
+  if [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/openffa" ]; then
+    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/openffa"
   fi
-  if [[ ! -e /mnt/config/data/quake2/q2admin/game.so ]]; then
-    /usr/bin/wget -O /tmp/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz https://files.nephatrine.net/archives/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz \
-     && /command/s6-setuidgid guardian /bin/tar -C /mnt/config/data/quake2/q2admin -xvzf /tmp/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz
-    /usr/bin/wget -O /tmp/q2admin-nxmod_noarch.tar.gz https://files.nephatrine.net/archives/q2admin-nxmod_noarch.tar.gz \
-     && /command/s6-setuidgid guardian /bin/tar -C /mnt/config/data/quake2/q2admin -xvzf /tmp/q2admin-nxmod_noarch.tar.gz
-  fi
-  if [[ -d /opt/quake2-data/q2admin ]]; then
-    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/q2admin/* /mnt/config/data/quake2/q2admin/
+  if [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/opentdm" ]; then
+    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/opentdm"
   fi
 fi
 
-# COPY YAMAGI FIXES OVER
+# Download Q2Admin
 
-if [[ -d /mnt/config/data/quake2/baseq2 && -d /opt/quake2-data/baseq2 ]]; then
-  /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/baseq2/* /mnt/config/data/quake2/baseq2/
-fi
-if [[ -d /mnt/config/data/quake2/jugfull && -d /opt/quake2-data/jugfull ]]; then
-  /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/jugfull/* /mnt/config/data/quake2/jugfull/
-fi
-if [[ -d /mnt/config/data/quake2/xatrix && -d /opt/quake2-data/xatrix ]]; then
-  /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/xatrix/* /mnt/config/data/quake2/xatrix/
-fi
-if [[ -d /mnt/config/data/quake2/rogue && -d /opt/quake2-data/rogue ]]; then
-  /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/rogue/* /mnt/config/data/quake2/rogue/
-fi
-if [[ -d /mnt/config/data/quake2/zaero && -d /opt/quake2-data/zaero ]]; then
-  /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/zaero/* /mnt/config/data/quake2/zaero/
-fi
-
-# REGENERATE WWW MIRROR?
-
-if [[ ! -z "${QUAKE2_MIRROR}" && "${QUAKE2_MIRROR}" == "true" ]]; then
-  if [[ -d /mnt/config/www/quake2 ]]; then
-    /bin/rm -rf /mnt/config/www/quake2/*
+if [ -n "${QUAKE2_INSTALL}" ] && [ "$(uname)" = "x86_64" ]; then
+  if [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/q2admin" ]; then
+    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/q2admin"
   fi
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/q2admin" ] && [ ! -f "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/q2admin/game.so" ]; then
+    /usr/bin/wget -O /tmp/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz https://nephatrine.net/backup/q2admin/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz \
+     && /command/s6-setuidgid guardian /bin/tar -C "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/q2admin/" -xvzf /tmp/q2admin-nxmod_x86_64-alpine-linux-musl.tar.gz
+    /usr/bin/wget -O /tmp/q2admin-nxmod_noarch.tar.gz https://nephatrine.net/backup/q2admin/q2admin-nxmod_noarch.tar.gz \
+     && /command/s6-setuidgid guardian /bin/tar -C "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/q2admin/" -xvzf /tmp/q2admin-nxmod_noarch.tar.gz
+  fi
+fi
+
+# Copy Map Fixes
+
+if [ -n "${QUAKE2_INSTALL}" ]; then
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2" ] && [ -d /opt/quake2-data/baseq2 ]; then
+    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/baseq2/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2/"
+  fi
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/jugfull" ] && [ -d /opt/quake2-data/jugfull ]; then
+    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/jugfull/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/jugfull/"
+  fi
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/xatrix" ] && [ -d /opt/quake2-data/xatrix ]; then
+    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/xatrix/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/xatrix/"
+  fi
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/rogue" ] && [ -d /opt/quake2-data/rogue ]; then
+    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/rogue/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/rogue/"
+  fi
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/zaero" ] && [ -d /opt/quake2-data/zaero ]; then
+    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/zaero/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/zaero/"
+  fi
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/3zb2" ] && [ -d /opt/quake2-data/3zb2 ]; then
+    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/3zb2/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/3zb2/"
+  fi
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/ctf" ] && [ -d /opt/quake2-data/ctf ]; then
+    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/ctf/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/ctf/"
+  fi
+  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/q2admin" ] && [ -d /opt/quake2-data/q2admin ]; then
+    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/q2admin/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/q2admin/"
+  fi
+fi
+
+# Regenerate HTTP Mirror
+
+if [ -n "${QUAKE2_MIRROR}" ]; then
   /usr/local/bin/quake2-mirror
 fi

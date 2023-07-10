@@ -1,43 +1,76 @@
 #!/command/with-contenv /bin/bash
 
-GAME_START=${GAME_START:-"+exec server.cfg"}
+export HOME=/mnt/config/home
+export GAME_START=${GAME_START:-"+exec server.cfg"}
 
-cd /opt/quake2
-
-if ! /usr/bin/pgrep -f quakedock >/dev/null; then
-  export HOME=/mnt/config/home
-  
-  if [[ -f ${HOME}/.yq2/baseq2/qconsole.log ]]; then
-    /bin/ls -la ${HOME}/.yq2/baseq2/qconsole.log | /command/s6-setuidgid guardian /usr/bin/tee -a /mnt/config/log/qconsole.log
-    /bin/cat ${HOME}/.yq2/baseq2/qconsole.log | /command/s6-setuidgid guardian /usr/bin/tee -a /mnt/config/log/qconsole.log
-    /bin/rm -f ${HOME}/.yq2/baseq2/qconsole.log
-  fi
-  
-  if [[ -d /mnt/shared/data/quake2/openffa/highscores ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /opt/quake2/openffa
-    /command/s6-setuidgid guardian /bin/cp -rvs /mnt/shared/data/quake2/openffa/highscores /opt/quake2/openffa/highscores
-  fi
-  if [[ -d /mnt/shared/data/quake2/openffa/mapcfg ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /opt/quake2/openffa
-    /command/s6-setuidgid guardian /bin/cp -rvs /mnt/shared/data/quake2/openffa/mapcfg /opt/quake2/openffa/mapcfg
-  fi
-  if [[ -d /mnt/shared/data/quake2/openffa/motd ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p /opt/quake2/openffa
-    /command/s6-setuidgid guardian /bin/cp -rvs /mnt/shared/data/quake2/openffa/motd /opt/quake2/openffa/motd
-  fi
-
-  if [[ -d /mnt/shared/data/quake2 ]]; then
-    /command/s6-setuidgid guardian /usr/bin/screen -dmS quakedock ./q2ded -datadir /mnt/shared/data/quake2 +set basepath /mnt/shared/data/quake2 +set savepath /mnt/config/home/.yq2 ${GAME_START};
+if [[ -z "${QUAKE2_DATA}" ]]; then
+  if [[ -n "${QUAKE2_INSTALL}" && ! "${QUAKE2_INSTALL}" == "true" && ! "${QUAKE2_INSTALL}" == "false" ]]; then
+    export QUAKE2_DATA="${QUAKE2_INSTALL}"
   else
-    /command/s6-setuidgid guardian /usr/bin/screen -dmS quakedock ./q2ded -datadir /mnt/config/data/quake2 +set basepath /mnt/config/data/quake2 +set savepath /mnt/config/home/.yq2 ${GAME_START};
+    export QUAKE2_DATA="/mnt/config"
   fi
-
-  if [[ -f ${HOME}/.screenrc ]]; then
-    /bin/chown guardian:users ${HOME}
-    /bin/chown guardian:users ${HOME}/.screenrc
-  fi
-  sleep 10
 fi
+
+if [[ -z "${QUAKE2_DATA_SUBPATH}" ]]; then
+  export QUAKE2_DATA_SUBPATH=/data/quake2
+fi
+
+# Transfer Yamagi Log
+
+if [[ -f "${HOME}/.yq2/baseq2/qconsole.log" ]]; then
+  /bin/ls -la "${HOME}/.yq2/baseq2/qconsole.log" | /command/s6-setuidgid guardian /usr/bin/tee -a /mnt/config/log/qconsole.log
+  /bin/cat "${HOME}/.yq2/baseq2/qconsole.log" | /command/s6-setuidgid guardian /usr/bin/tee -a /mnt/config/log/qconsole.log
+  /bin/rm -f "${HOME}/.yq2/baseq2/qconsole.log"
+fi
+
+# Link OpenFFA Configs
+
+if [[ ! -d "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/highscores" && -d /opt/quake2/openffa/highscores ]]; then
+  /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/highscores"
+  if [[ -d "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/highscores" ]]; then
+    /command/s6-setuidgid guardian /bin/cp -Rv /opt/quake2/openffa/highscores/. "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/highscores/"
+    /bin/rm -rf /opt/quake2/openffa/highscores
+  fi
+fi
+if [[ ! -d "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/mapcfg" && -d /opt/quake2/openffa/mapcfg ]]; then
+  /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/mapcfg"
+  if [[ -d "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/mapcfg" ]]; then
+    /command/s6-setuidgid guardian /bin/cp -Rv /opt/quake2/openffa/mapcfg/. "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/mapcfg/"
+    /bin/rm -rf /opt/quake2/openffa/mapcfg
+  fi
+fi
+if [[ ! -d "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/motd" && -d /opt/quake2/openffa/motd ]]; then
+  /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/motd"
+  if [[ -d "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/motd" ]]; then
+    /command/s6-setuidgid guardian /bin/cp -Rv /opt/quake2/openffa/motd/. "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/motd/"
+    /bin/rm -rf /opt/quake2/openffa/motd
+  fi
+fi
+if [[ -d /opt/quake2/openffa ]]; then
+  if [[ -d "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/highscores" && ! -d /opt/quake2/openffa/highscores ]]; then
+    /bin/cp -Rvsp "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/highscores" /opt/quake2/openffa/
+  fi
+  if [[ -d "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/mapcfg" && ! -d /opt/quake2/openffa/mapcfg ]]; then
+    /bin/cp -Rvsp "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/mapcfg" /opt/quake2/openffa/
+  fi
+  if [[ -d "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/motd" && ! -d /opt/quake2/openffa/motd ]]; then
+    /bin/cp -Rvsp "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/motd" /opt/quake2/openffa/
+  fi
+fi
+
+# Start Yamagi Quake II
+
+cd /opt/quake2 || exit 1
+/command/s6-setuidgid guardian /usr/bin/screen -dmS quakedock ./q2ded -datadir "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}" +set basepath "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}" +set savepath /mnt/config/home/.yq2 ${GAME_START};
+
+if [[ -f ${HOME}/.screenrc ]]; then
+  /bin/chown guardian:users ${HOME}
+  /bin/chown guardian:users ${HOME}/.screenrc
+fi
+sleep 5
+
+# Idle...
+
 while /usr/bin/pgrep -f quakedock >/dev/null; do
   sleep 60
 done

@@ -1,77 +1,141 @@
 [Git](https://code.nephatrine.net/NephNET/docker-quake2-yamagi/src/branch/master) |
 [Docker](https://hub.docker.com/r/nephatrine/quake2-server/) |
-[unRAID](https://code.nephatrine.net/nephatrine/unraid-containers)
+[unRAID](https://code.nephatrine.net/NephNET/unraid-containers)
 
-# Quake II Server
+# Yamagi Quake II Dedicated Server
 
-This docker image contains a Quake II dedicated server.
+This docker container manages the Yamagi Quake II dedicated server.
 
-- [Alpine Linux](https://alpinelinux.org/) w/ [S6 Overlay](https://github.com/just-containers/s6-overlay)
-- [NGINX](https://www.nginx.com/) w/ [CertBot](https://certbot.eff.org/) (with ``nginx`` tags)
-- [Yamagi Quake II](https://yamagi.org/quake2/)
+The `yamagi-latest` tag points to version `8.20` and this is the only image
+actively being updated. There are tags for older versions, but these may no
+longer be using the latest Alpine version and packages.
 
-The ``nginx`` tags will provide an HTTP(S) mirror of the game files for clients
-that support HTTP downloads.
+## Docker-Compose
 
-You can spin up a quick temporary test container like this:
+These are example docker-compose files for various setups.
 
-~~~
-docker run --rm -p 27910:27910 -it nephatrine/quake2-server:latest /bin/bash
-~~~
+### Single Server
 
-## Docker Tags
+This is just a simple Quake II server.
 
-- **nephatrine/quake2-server:latest**: Yamagi Quake II / Alpine Latest
+```yaml
+services:
+  quake2-server:
+    image: nephatrine/quake2-server:yamagi-latest
+    container_name: quake2-server
+    environment:
+      TZ: America/New_York
+      PUID: 1000
+      PGID: 1000
+    ports:
+      - "27910:27910/udp"
+    volumes:
+      - /mnt/containers/quake2-server:/mnt/config
+```
 
-## Configuration Variables
+### Single Server w/ HTTP Mirror
 
-You can set these parameters using the syntax ``-e "VARNAME=VALUE"`` on your
-``docker run`` command. Some of these may only be used during initial
-configuration and further changes may need to be made in the generated
-configuration files.
+This container is set up to create an HTTP mirror of the game contents so that
+players joining can get better download speeds on engines that support it. You
+can easily add an NGINX container and map a separate volume that is shared
+between the game server and NGINX. Then you can just put that volume in
+`QUAKE2_MIRROR` and the `${QUAKE2_MIRROR}/www/quake2` directory will reflect
+the installed game data on the server.
 
-- ``GAME_START``: Startup Arguments (*"+exec server.cfg"*)
-- ``PUID``: Mount Owner UID (*1000*)
-- ``PGID``: Mount Owner GID (*100*)
-- ``TZ``: System Timezone (*America/New_York*)
+**NB:** You will need to manually configure NGINX's config to share
+`/mnt/config/www/quake2`.
 
-If using the ``nginx`` tags, you can use the additional configuration options
-documented for the [nginx-ssl](https://code.nephatrine.net/nephatrine/docker-nginx-ssl)
-container.
+```yaml
+services:
+  quake2-server:
+    image: nephatrine/quake2-server:yamagi-latest
+    container_name: quake2-server
+    environment:
+      TZ: America/New_York
+      PUID: 1000
+      PGID: 1000
+      QUAKE2_MIRROR: /mnt/mirror
+    ports:
+      - "27910:27910/udp"
+    volumes:
+      - /mnt/containers/quake2-server:/mnt/config
+      - /mnt/containers/quake2-http:/mnt/mirror
+  quake2-http:
+    image: nephatrine/nginx-ssl:latest
+    container_name: quake2-http
+    environment:
+      TZ: America/New_York
+      PUID: 1000
+      PGID: 1000
+      ADMINIP: 127.0.0.1
+      TRUSTSN: 192.168.0.0/16
+      DNSADDR: "8.8.8.8 8.8.4.4"
+    ports:
+      - "80:8080/tcp"
+    volumes:
+      - /mnt/containers/quake2-http:/mnt/config
+```
 
-## Persistent Mounts
+### Multiple Servers
 
-You can provide a persistent mountpoint using the ``-v /host/path:/container/path``
-syntax. These mountpoints are intended to house important configuration files,
-logs, and application state (e.g. databases) so they are not lost on image
-update.
+This is an example where you want to run two servers on the same host. In such
+cases, it is possible to have them use a shared game data volume. You just map
+a separate volume that is shared by both and put that volume in
+`QUAKE2_INSTALL` on one and `QUAKE2_DATA` on the other. Make sure that the
+first container starts before the other so that the installation is all set up
+for it and you should be good to go.
 
-- ``/mnt/config``: Persistent Data.
-- ``/mnt/shared``: Optional - Shared Game Data.
+When hosting multiple servers, you *can* use a port setting of
+`27911:27910/udp` instead of specifying a different internal listening port in
+`GAME_START`, but the port is used for both the port being listened to by the
+server as well as what they advertise to the master server. So if you want your
+servers to show up properly in the master servers, you'll want to specify the
+port each should run on and map those separate ports on both sides.
 
-Do not share ``/mnt/config`` volumes between multiple containers as they may
-interfere with the operation of one another.
+```yaml
+services:
+  quake2-server-1:
+    image: nephatrine/quake2-server:yamagi-latest
+    container_name: quake2-server-1
+    environment:
+      TZ: America/New_York
+      PUID: 1000
+      PGID: 1000
+      QUAKE2_INSTALL: /mnt/shared
+	  GAME_START: "+set port 27910 +exec server.cfg"
+    ports:
+      - "27910:27910/udp"
+    volumes:
+      - /mnt/containers/quake2-server-1:/mnt/config
+      - /mnt/containers/quake2-data:/mnt/shared
+  quake2-server-2:
+    image: nephatrine/quake2-server:yamagi-latest
+    container_name: quake2-server-2
+    environment:
+      TZ: America/New_York
+      PUID: 1000
+      PGID: 1000
+      QUAKE2_DATA: /mnt/shared
+	  GAME_START: "+set port 27911 +game ctf +exec server.cfg"
+    ports:
+      - "27911:27911/udp"
+    depends_on:
+      - quake2-server-1
+    volumes:
+      - /mnt/containers/quake2-server-2:/mnt/config
+      - /mnt/containers/quake2-data:/mnt/shared
+```
 
-The ``/mnt/shared`` volume, if mounted, should contain a ``data/quake2``
-directory with the Quake II game data that should be used. This can be shared
-between multiple Quake II servers.
+## Server Configuration
 
-You can perform some basic configuration of the container using the files and
-directories listed below.
+These are the configuration and data files you will likely need to be aware of
+and potentially customize.
 
-- ``/mnt/config/data/quake2/``: Game Data. [*]
-- ``/mnt/config/data/quake2/baseq2/server.cfg``: Default Quake II Configuration. [*]
-- ``/mnt/config/etc/crontabs/<user>``: User Crontabs. [*]
-- ``/mnt/config/etc/logrotate.conf``: Logrotate Global Configuration.
-- ``/mnt/config/etc/logrotate.d/``: Logrotate Additional Configuration.
+- `${QUAKE2_DATA}/data/quake2/*`
+- `${QUAKE2_DATA}/data/quake2/baseq2/server.cfg`
 
-**[*] Changes to some configuration files may require service restart to take
-immediate effect.**
+By customizing the `GAME_START` variable, you can run in a different game
+directory or exec a different config file, of course.
 
-## Network Services
-
-This container runs network services that are intended to be exposed outside
-the container. You can map these to host ports using the ``-p HOST:CONTAINER``
-or ``-p HOST:CONTAINER/PROTOCOL`` syntax.
-
-- ``27910/tcp``: Quake II Server. This is the game server.
+Modifications to some of these may require a service restart to pull in the
+changes made.
