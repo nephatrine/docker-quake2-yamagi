@@ -1,0 +1,4 @@
+#!/command/execlineb
+
+foreground { /bin/chown guardian:users /mnt/shared }
+foreground { /bin/chown guardian:users /mnt/mirror }
