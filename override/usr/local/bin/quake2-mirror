@@ -45,12 +45,13 @@ done
 
 # Mirror Files
 
-if [ ! -d "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}" ]; then
-  /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}"
+if [ ! -d "${QUAKE2_MIRROR}${QUAKE2_DATA_SUBPATH}" ]; then
+  /bin/mkdir -p "${QUAKE2_MIRROR}${QUAKE2_DATA_SUBPATH}"
 fi
 if [ ! -d "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}" ]; then
   exit 1
 fi
+/bin/chown guardian:users "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}"
 
 cd /tmp/quake2 || exit 1
 /usr/bin/find . -type f -name '*.bsp' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;

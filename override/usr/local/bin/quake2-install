@@ -32,6 +32,16 @@ fi
 
 # Install Quake II
 
+if [ -n "${QUAKE2_INSTALL}" ]; then
+  if [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}" ]; then
+    /bin/mkdir -p "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}"
+  fi
+  if [ ! -d "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}" ]; then
+    exit 1
+  fi
+  /bin/chown guardian:users "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}"
+fi
+
 if [ -n "${QUAKE2_INSTALL}" ] && [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2" ]; then
   if [ ! -f /tmp/q2-314-demo-x86.exe ]; then
     /usr/bin/wget -qO /tmp/q2-314-demo-x86.exe https://nephatrine.net/backup/quake2/q2-314-demo-x86.exe
