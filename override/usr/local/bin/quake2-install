@@ -148,7 +148,7 @@ fi
 
 # Download Q2Admin
 
-if [ -n "${QUAKE2_INSTALL}" ] && [ "$(uname)" = "x86_64" ]; then
+if [ -n "${QUAKE2_INSTALL}" ] && [ "$(uname -m)" = "x86_64" ]; then
   if [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/q2admin" ]; then
     /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/q2admin"
   fi

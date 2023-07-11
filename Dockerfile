@@ -36,7 +36,7 @@ RUN echo "====== COMPILE TOOLS ======" \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 RUN echo "====== COMPILE 3ZB2 ======" \
  && cd /root/3zb2-zigflag \
- && if [ ! "$(uname)" = "x86_64" ]; then sed -i "s~-msse2 -mfpmath=sse~~g" Makefile; fi \
+ && if [ ! "$(uname -m)" = "x86_64" ]; then sed -i "s~-msse2 -mfpmath=sse~~g" Makefile; fi \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
  && mv 3zb2/pak10.pak 3zb2/pak6.pak
 RUN echo "====== COMPILE LMCTF ======" \
