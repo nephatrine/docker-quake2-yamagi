@@ -45,8 +45,8 @@ done
 
 # Mirror Files
 
-if [ ! -d "${QUAKE2_MIRROR}${QUAKE2_DATA_SUBPATH}" ]; then
-  /bin/mkdir -p "${QUAKE2_MIRROR}${QUAKE2_DATA_SUBPATH}"
+if [ ! -d "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}" ]; then
+  /bin/mkdir -p "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}"
 fi
 if [ ! -d "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}" ]; then
   exit 1
