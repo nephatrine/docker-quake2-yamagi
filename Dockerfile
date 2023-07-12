@@ -60,7 +60,7 @@ FROM nephatrine/alpine-s6:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
 RUN echo "====== INSTALL PACKAGES ======" \
- && apk add --no-cache libcurl screen sdl2 \
+ && apk add --no-cache curl libcurl screen sdl2 \
  && mkdir -p /mnt/shared /mnt/mirror
 
 COPY --from=builder /root/pakextract/pakextract /usr/local/bin/
