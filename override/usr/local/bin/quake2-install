@@ -33,10 +33,18 @@ fi
 # Install Quake II
 
 if [ -n "${QUAKE2_INSTALL}" ]; then
+  while [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}" ]; do
+    dirn="${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}"
+    while [ -n "${dirn}" ] && [ ! "${dirn}" = "/" ]; do
+      basn=$(/usr/bin/basename "${dirn}")
+      dirn=$(/usr/bin/dirname "${dirn}")
+      if [ -d "${dirn}" ]; then
+        /command/s6-setuidgid guardian /bin/mkdir "${dirn}/${basn}" || exit 1
+        break
+      fi
+    done
+  done
   if [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}" ]; then
-    /bin/mkdir -p "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}"
-  fi
-  if [ ! -d "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}" ]; then
     exit 1
   fi
   /bin/chown guardian:users "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}"
@@ -142,20 +150,6 @@ if [ -n "${QUAKE2_INSTALL}" ] && [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}
   fi
 fi
 
-# Create Other Mod Directories
-
-if [ -n "${QUAKE2_INSTALL}" ]; then
-  if [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/3zb2" ]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/3zb2"
-  fi
-  if [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/openffa" ]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/openffa"
-  fi
-  if [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/opentdm" ]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/opentdm"
-  fi
-fi
-
 # Download Q2Admin
 
 if [ -n "${QUAKE2_INSTALL}" ] && [ "$(uname -m)" = "x86_64" ]; then
@@ -170,33 +164,20 @@ if [ -n "${QUAKE2_INSTALL}" ] && [ "$(uname -m)" = "x86_64" ]; then
   fi
 fi
 
-# Copy Map Fixes
+# Copy Mod Data
 
 if [ -n "${QUAKE2_INSTALL}" ]; then
-  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2" ] && [ -d /opt/quake2-data/baseq2 ]; then
-    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/baseq2/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/baseq2/"
-  fi
-  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/jugfull" ] && [ -d /opt/quake2-data/jugfull ]; then
-    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/jugfull/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/jugfull/"
-  fi
-  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/xatrix" ] && [ -d /opt/quake2-data/xatrix ]; then
-    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/xatrix/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/xatrix/"
-  fi
-  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/rogue" ] && [ -d /opt/quake2-data/rogue ]; then
-    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/rogue/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/rogue/"
-  fi
-  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/zaero" ] && [ -d /opt/quake2-data/zaero ]; then
-    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/zaero/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/zaero/"
-  fi
-  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/3zb2" ] && [ -d /opt/quake2-data/3zb2 ]; then
-    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/3zb2/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/3zb2/"
-  fi
-  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/ctf" ] && [ -d /opt/quake2-data/ctf ]; then
-    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/ctf/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/ctf/"
-  fi
-  if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/q2admin" ] && [ -d /opt/quake2-data/q2admin ]; then
-    /command/s6-setuidgid guardian /bin/cp -Rn /opt/quake2-data/q2admin/. "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/q2admin/"
-  fi
+  cd /opt/quake2-data || exit 1
+  for dir in */; do
+    if [ -f "/opt/quake2-data/${dir}.filelist" ] || [ -f "/opt/quake2-data/${dir}.noclient" ]; then
+      if [ ! -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/${dir}" ]; then
+        /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/${dir}"
+      fi
+    fi
+    if [ -d "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/${dir}" ] && [ -d "/opt/quake2-data/${dir}" ]; then
+      /command/s6-setuidgid guardian /bin/cp -Rn "/opt/quake2-data/${dir}." "${QUAKE2_INSTALL}${QUAKE2_DATA_SUBPATH}/${dir}"
+    fi
+  done
 fi
 
 # Regenerate HTTP Mirror
