@@ -10,7 +10,7 @@ ARG XATRIX_VERSION=XATRIX_2_11
 
 RUN git -C /root clone -b "$YQUAKE2_VERSION" --single-branch --depth=1 https://github.com/yquake2/yquake2.git
 RUN git -C /root clone --single-branch --depth=1 https://github.com/DirtBagXon/3zb2-zigflag.git
-RUN git -C /root clone --single-branch --depth=1 https://github.com/nephatrine/lmctf60.git lmctf
+RUN git -C /root clone -b master --single-branch --depth=1 https://github.com/nephatrine/lmctf60.git lmctf
 RUN git -C /root clone --single-branch --depth=1 https://github.com/packetflinger/openffa.git
 RUN git -C /root clone --single-branch --depth=1 https://github.com/packetflinger/opentdm.git
 RUN git -C /root clone -b "$CTF_VERSION" --single-branch --depth=1 https://github.com/yquake2/ctf.git
@@ -41,6 +41,7 @@ RUN echo "====== COMPILE 3ZB2 ======" \
  && mv 3zb2/pak10.pak 3zb2/pak6.pak
 RUN echo "====== COMPILE LMCTF ======" \
  && cd /root/lmctf \
+ && sed -i 's~ldd -r~ldd~g' GNUmakefile \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
  && mv game*.so game.so
 RUN echo "====== COMPILE OPENFFA ======" \
