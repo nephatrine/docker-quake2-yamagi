@@ -10,7 +10,7 @@ ARG XATRIX_VERSION=XATRIX_2_11
 
 RUN git -C /root clone -b "$YQUAKE2_VERSION" --single-branch --depth=1 https://github.com/yquake2/yquake2.git
 RUN git -C /root clone --single-branch --depth=1 https://github.com/DirtBagXon/3zb2-zigflag.git
-RUN git -C /root clone --single-branch --depth=1 https://github.com/nephatrine/lmctf60.git
+RUN git -C /root clone --single-branch --depth=1 https://github.com/nephatrine/lmctf60.git lmctf
 RUN git -C /root clone --single-branch --depth=1 https://github.com/packetflinger/openffa.git
 RUN git -C /root clone --single-branch --depth=1 https://github.com/packetflinger/opentdm.git
 RUN git -C /root clone -b "$CTF_VERSION" --single-branch --depth=1 https://github.com/yquake2/ctf.git
