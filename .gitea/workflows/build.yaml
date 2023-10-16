@@ -1,9 +1,12 @@
 name: Build Container Image
 run-name: ${{ gitea.actor }} pushed to ${{ gitea.repository }}:${{ gitea.ref_name }}
-on: [push, workflow_call]
+on:
+  push:
+  schedule:
+    - cron:  '40 19 * * 3'
 jobs:
   build_amd64:
-    if: gitea.repository_owner == 'NephNET' && !contains(github.event.head_commit.message, '#noci')
+    if: gitea.repository_owner == 'NephNET' && (!contains(gitea.event.head_commit.message, '#noci') || gitea.event_name != 'push')
     runs-on: nephnet-amd64
     steps:
       - name: Checkout Repository
@@ -27,7 +30,7 @@ jobs:
           title: "Container Build (X86_64)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
   build_arm64:
-    if: gitea.repository_owner == 'NephNET' && !contains(github.event.head_commit.message, '#noci')
+    if: gitea.repository_owner == 'NephNET' && (!contains(gitea.event.head_commit.message, '#noci') || gitea.event_name != 'push')
     runs-on: nephnet-arm64
     steps:
       - name: Checkout Repository
@@ -51,7 +54,7 @@ jobs:
           title: "Container Build (AARCH64)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
   build_armhf:
-    if: gitea.repository_owner == 'NephNET' && !contains(github.event.head_commit.message, '#noci')
+    if: gitea.repository_owner == 'NephNET' && (!contains(gitea.event.head_commit.message, '#noci') || gitea.event_name != 'push')
     runs-on: nephnet-armhf
     steps:
       - name: Checkout Repository
@@ -75,7 +78,7 @@ jobs:
           title: "Container Build (ARMV7L)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
   build_riscv64:
-    if: gitea.repository_owner == 'NephNET' && !contains(github.event.head_commit.message, '#noci')
+    if: gitea.repository_owner == 'NephNET' && (!contains(gitea.event.head_commit.message, '#noci') || gitea.event_name != 'push')
     runs-on: nephnet-riscv64
     steps:
       - name: Checkout Repository
@@ -117,13 +120,6 @@ jobs:
     needs: [build_amd64]
     runs-on: nephnet-amd64
     steps:
-      - name: Check Base Image
-        if: github.event_name != 'push'
-        uses: https://github.com/lucacome/docker-image-update-checker@v1
-        id: checkbase
-        with:
-          base-image: nephatrine/alpine-s6:latest-amd64
-          image: nephatrine/quake2-server:yamagi-amd64
       - name: Docker Login
         uses: https://github.com/docker/login-action@v3
         with:
@@ -133,14 +129,6 @@ jobs:
         run: |
           docker tag code.nephatrine.net/nephnet/quake2-yamagi:master-amd64 nephatrine/quake2-server:yamagi-amd64
           docker push nephatrine/quake2-server:yamagi-amd64
-      - name: Notify Discord
-        if: github.event_name == 'push' || steps.checkbase.outputs.needs-updating == 'true'
-        uses: https://github.com/sarisia/actions-status-discord@v1
-        with:
-          title: "DockerHub: quake2-yamagi"
-          description: "The container image was pushed to [DockerHub](https://hub.docker.com/repository/docker/nephatrine/quake2-server/general).\nPull `nephatrine/quake2-server:yamagi-amd64` for the newest image."
-          nodetail: true
-          webhook: ${{ secrets.DISCORD_WEBHOOK_PACKAGE }}
   publish_arm64:
     if: gitea.ref_name == 'master'
     needs: [build_arm64]
@@ -187,6 +175,14 @@ jobs:
     needs: [publish_amd64, publish_arm64, publish_armhf, publish_riscv64]
     runs-on: nephnet
     steps:
+      - name: Check Base Image
+        if: github.event_name != 'push'
+        uses: https://github.com/lucacome/docker-image-update-checker@v1
+        id: checkbase
+        with:
+          base-image: nephatrine/alpine-s6:latest
+          image: nephatrine/quake2-server:yamagi
+          platforms: linux/amd64
       - name: Docker Login
         uses: https://github.com/docker/login-action@v3
         with:
@@ -202,6 +198,14 @@ jobs:
           docker manifest push --purge nephatrine/quake2-server:yamagi-8
           docker manifest push --purge nephatrine/quake2-server:yamagi-latest
           docker manifest push --purge nephatrine/quake2-server:latest
+      - name: Notify Discord
+        if: github.event_name == 'push' || steps.checkbase.outputs.needs-updating == 'true'
+        uses: https://github.com/sarisia/actions-status-discord@v1
+        with:
+          title: "DockerHub: quake2-yamagi"
+          description: "The container image was pushed to [DockerHub](https://hub.docker.com/repository/docker/nephatrine/quake2-server/general).\nPull `nephatrine/quake2-server:yamagi` for the newest image."
+          nodetail: true
+          webhook: ${{ secrets.DISCORD_WEBHOOK_PACKAGE }}
       - name: Checkout Repository
         uses: https://gitea.com/actions/checkout@v3
       - name: Docker Describe
