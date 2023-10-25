@@ -1,53 +1,67 @@
+# SPDX-FileCopyrightText: 2020 - 2023 Daniel Wolf <nephatrine@gmail.com>
+#
+# SPDX-License-Identifier: ISC
+
 FROM nephatrine/nxbuilder:alpine AS builder
 
 RUN echo "====== INSTALL LIBRARIES ======" \
  && apk add --no-cache mesa-dev sdl2-dev
 
 ARG YQUAKE2_VERSION=QUAKE2_8_20
-ARG CTF_VERSION=CTF_1_09
-ARG ROGUE_VERSION=ROGUE_2_10
-ARG XATRIX_VERSION=XATRIX_2_11
-
 RUN git -C /root clone -b "$YQUAKE2_VERSION" --single-branch --depth=1 https://github.com/yquake2/yquake2.git
-RUN git -C /root clone --single-branch --depth=1 https://github.com/DirtBagXon/3zb2-zigflag.git
-RUN git -C /root clone --single-branch --depth=1 https://github.com/QwazyWabbitWOS/lmctf60.git
-RUN git -C /root clone --single-branch --depth=1 https://github.com/skullernet/openffa.git
-RUN git -C /root clone --single-branch --depth=1 https://github.com/packetflinger/opentdm.git
-RUN git -C /root clone -b "$CTF_VERSION" --single-branch --depth=1 https://github.com/yquake2/ctf.git
-RUN git -C /root clone -b "$ROGUE_VERSION" --single-branch --depth=1 https://github.com/yquake2/rogue.git
-RUN git -C /root clone -b "$XATRIX_VERSION" --single-branch --depth=1 https://github.com/yquake2/xatrix.git
-RUN git -C /root clone --single-branch --depth=1 https://github.com/yquake2/zaero.git
-RUN git -C /root clone --single-branch --depth=1 https://github.com/yquake2/pakextract.git
-
 RUN echo "====== COMPILE QUAKE II ======" \
  && cd /root/yquake2 \
- && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) server game \
+ && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) server game
+
+ARG CTF_VERSION=CTF_1_09
+RUN git -C /root clone -b "$CTF_VERSION" --single-branch --depth=1 https://github.com/yquake2/ctf.git
+RUN echo "====== COMPILE CTF ======" \
  && cd /root/ctf \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
-RUN echo "====== COMPILE EXPANSIONS ======" \
+
+ARG XATRIX_VERSION=XATRIX_2_11
+RUN git -C /root clone -b "$XATRIX_VERSION" --single-branch --depth=1 https://github.com/yquake2/xatrix.git
+RUN echo "====== COMPILE THE RECKONING ======" \
  && cd /root/xatrix \
- && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
+ && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
+
+ARG ROGUE_VERSION=ROGUE_2_10
+RUN git -C /root clone -b "$ROGUE_VERSION" --single-branch --depth=1 https://github.com/yquake2/rogue.git
+RUN echo "====== COMPILE GROUND ZERO ======" \
  && cd /root/rogue \
- && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
+ && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
+
+RUN git -C /root clone --single-branch --depth=1 https://github.com/yquake2/zaero.git
+RUN echo "====== COMPILE ZAERO ======" \
  && cd /root/zaero \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
-RUN echo "====== COMPILE TOOLS ======" \
+
+RUN git -C /root clone --single-branch --depth=1 https://github.com/yquake2/pakextract.git
+RUN echo "====== COMPILE PAKEXTRACT ======" \
  && cd /root/pakextract \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
+
+RUN git -C /root clone --single-branch --depth=1 https://github.com/DirtBagXon/3zb2-zigflag.git
 RUN echo "====== COMPILE 3ZB2 ======" \
  && cd /root/3zb2-zigflag \
  && if [ ! "$(uname -m)" = "x86_64" ]; then sed -i "s~-msse2 -mfpmath=sse~~g" Makefile; fi \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
  && mv 3zb2/pak10.pak 3zb2/pak6.pak
+
+RUN git -C /root clone --single-branch --depth=1 https://github.com/QwazyWabbitWOS/lmctf60.git
 RUN echo "====== COMPILE LMCTF ======" \
  && cd /root/lmctf60 \
  && sed -i 's~ldd -r~ldd~g' GNUmakefile \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
  && mv game*.so game.so
+
+RUN git -C /root clone --single-branch --depth=1 https://github.com/skullernet/openffa.git
 RUN echo "====== COMPILE OPENFFA ======" \
  && cd /root/openffa \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
  && mv game*.so game.so
+
+RUN git -C /root clone --single-branch --depth=1 https://github.com/packetflinger/opentdm.git
 RUN echo "====== COMPILE OPENTDM ======" \
  && cd /root/opentdm \
  && sed -i "s~shell pkg-config libcurl --cflags~shell curl-config --cflags~g" Makefile \
