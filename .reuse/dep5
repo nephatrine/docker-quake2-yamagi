@@ -1,0 +1,12 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: docker-quake2-yamagi
+Upstream-Contact: Daniel Wolf <nephatrine@gmail.com>
+Source: https://code.nephatrine.net/NephNET/docker-quake2-yamagi
+
+Files: override/etc/s6-overlay/*
+Copyright: 2022 - 2023 Daniel Wolf <nephatrine@gmail.com>
+License: ISC
+
+Files: override/opt/quake2-data/*
+Copyright: 2021 - 2023 Daniel Wolf <nephatrine@gmail.com>
+License: ISC

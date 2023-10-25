@@ -1,4 +1,7 @@
 #!/usr/bin/with-contenv /bin/sh
+# SPDX-FileCopyrightText: 2021 - 2023 Daniel Wolf <nephatrine@gmail.com>
+#
+# SPDX-License-Identifier: ISC
 
 if [ -z "${QUAKE2_DATA}" ]; then
   if [ -n "${QUAKE2_INSTALL}" ] && [ ! "${QUAKE2_INSTALL}" = "true" ] && [ ! "${QUAKE2_INSTALL}" = "false" ]; then

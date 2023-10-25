@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2020 - 2023 Daniel Wolf <nephatrine@gmail.com>
+
+SPDX-License-Identifier: ISC
+-->
+
 [Git](https://code.nephatrine.net/NephNET/docker-quake2-yamagi/src/branch/master) |
 [Docker](https://hub.docker.com/r/nephatrine/quake2-server/) |
 [unRAID](https://code.nephatrine.net/NephNET/unraid-containers)
