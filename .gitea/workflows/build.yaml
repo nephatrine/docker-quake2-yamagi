@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Daniel Wolf <nephatrine@gmail.com>
+#
+# SPDX-License-Identifier: ISC
+
 name: Build Container Image
 run-name: ${{ gitea.actor }} pushed to ${{ gitea.repository }}:${{ gitea.ref_name }}
 on:
@@ -15,24 +19,51 @@ jobs:
         run: |
           export BRANCH=${GITHUB_REF##*/}
           export BRANCH=${BRANCH:-master}
-          docker build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-cached --target builder ${{ gitea.workspace }}
+          docker build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-amd64-cached --target builder ${{ gitea.workspace }}
           docker build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-amd64 ${{ gitea.workspace }}
       - name: Docker Login
         uses: https://github.com/docker/login-action@v3
+        if: gitea.ref_name == 'master' || gitea.ref_name == ''
         with:
           registry: code.nephatrine.net
           username: ${{ gitea.actor }}
           password: ${{ secrets.PACKAGER_TOKEN }}
       - name: Docker Push
-        run: |
-          export BRANCH=${GITHUB_REF##*/}
-          export BRANCH=${BRANCH:-master}
-          docker push code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-amd64
+        if: gitea.ref_name == 'master' || gitea.ref_name == ''
+        run: docker push code.nephatrine.net/nephnet/quake2-yamagi:master-amd64
       - name: Notify Discord
         uses: https://github.com/sarisia/actions-status-discord@v1
         if: always()
         with:
           title: "Container Build (X86_64)"
+          webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
+  build_i386:
+    if: gitea.repository_owner == 'NephNET' && (!contains(gitea.event.head_commit.message, '#noci') || gitea.event_name == 'schedule')
+    runs-on: nephnet-i386
+    steps:
+      - name: Checkout Repository
+        uses: https://gitea.com/actions/checkout@v3
+      - name: Docker Build
+        run: |
+          export BRANCH=${GITHUB_REF##*/}
+          export BRANCH=${BRANCH:-master}
+          docker build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-i386-cached --target builder --platform linux/386 ${{ gitea.workspace }}
+          docker build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-i386 --platform linux/386 ${{ gitea.workspace }}
+      - name: Docker Login
+        uses: https://github.com/docker/login-action@v3
+        if: gitea.ref_name == 'master' || gitea.ref_name == ''
+        with:
+          registry: code.nephatrine.net
+          username: ${{ gitea.actor }}
+          password: ${{ secrets.PACKAGER_TOKEN }}
+      - name: Docker Push
+        if: gitea.ref_name == 'master' || gitea.ref_name == ''
+        run: docker push code.nephatrine.net/nephnet/quake2-yamagi:master-i386
+      - name: Notify Discord
+        uses: https://github.com/sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          title: "Container Build (I686)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
   build_arm64:
     if: gitea.repository_owner == 'NephNET' && (!contains(gitea.event.head_commit.message, '#noci') || gitea.event_name == 'schedule')
@@ -44,19 +75,18 @@ jobs:
         run: |
           export BRANCH=${GITHUB_REF##*/}
           export BRANCH=${BRANCH:-master}
-          docker build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-cached --target builder ${{ gitea.workspace }}
+          docker build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-arm64v8-cached --target builder ${{ gitea.workspace }}
           docker build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-arm64v8 ${{ gitea.workspace }}
       - name: Docker Login
         uses: https://github.com/docker/login-action@v3
+        if: gitea.ref_name == 'master' || gitea.ref_name == ''
         with:
           registry: code.nephatrine.net
           username: ${{ gitea.actor }}
           password: ${{ secrets.PACKAGER_TOKEN }}
       - name: Docker Push
-        run: |
-          export BRANCH=${GITHUB_REF##*/}
-          export BRANCH=${BRANCH:-master}
-          docker push code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-arm64v8
+        if: gitea.ref_name == 'master' || gitea.ref_name == ''
+        run: docker push code.nephatrine.net/nephnet/quake2-yamagi:master-arm64v8
       - name: Notify Discord
         uses: https://github.com/sarisia/actions-status-discord@v1
         if: always()
@@ -73,19 +103,18 @@ jobs:
         run: |
           export BRANCH=${GITHUB_REF##*/}
           export BRANCH=${BRANCH:-master}
-          docker build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-cached --target builder ${{ gitea.workspace }}
-          docker build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-armv7 ${{ gitea.workspace }}
+          docker build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-armv7-cached --target builder --platform linux/arm/v7 ${{ gitea.workspace }}
+          docker build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-armv7 --platform linux/arm/v7 ${{ gitea.workspace }}
       - name: Docker Login
         uses: https://github.com/docker/login-action@v3
+        if: gitea.ref_name == 'master' || gitea.ref_name == ''
         with:
           registry: code.nephatrine.net
           username: ${{ gitea.actor }}
           password: ${{ secrets.PACKAGER_TOKEN }}
       - name: Docker Push
-        run: |
-          export BRANCH=${GITHUB_REF##*/}
-          export BRANCH=${BRANCH:-master}
-          docker push code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-armv7
+        if: gitea.ref_name == 'master' || gitea.ref_name == ''
+        run: docker push code.nephatrine.net/nephnet/quake2-yamagi:master-armv7
       - name: Notify Discord
         uses: https://github.com/sarisia/actions-status-discord@v1
         if: always()
@@ -102,19 +131,18 @@ jobs:
         run: |
           export BRANCH=${GITHUB_REF##*/}
           export BRANCH=${BRANCH:-master}
-          docker build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-cached --target builder ${{ gitea.workspace }}
+          docker build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-riscv64-cached --target builder ${{ gitea.workspace }}
           docker build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-riscv64 ${{ gitea.workspace }}
       - name: Docker Login
         uses: https://github.com/docker/login-action@v3
+        if: gitea.ref_name == 'master' || gitea.ref_name == ''
         with:
           registry: code.nephatrine.net
           username: ${{ gitea.actor }}
           password: ${{ secrets.PACKAGER_TOKEN }}
       - name: Docker Push
-        run: |
-          export BRANCH=${GITHUB_REF##*/}
-          export BRANCH=${BRANCH:-master}
-          docker push code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-riscv64
+        if: gitea.ref_name == 'master' || gitea.ref_name == ''
+        run: docker push code.nephatrine.net/nephnet/quake2-yamagi:master-riscv64
       - name: Notify Discord
         uses: https://github.com/sarisia/actions-status-discord@v1
         if: always()
@@ -122,7 +150,8 @@ jobs:
           title: "Container Build (RISCV64)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
   build_manifest:
-    needs: [build_amd64, build_arm64, build_armhf, build_riscv64]
+    if: gitea.ref_name == 'master' || gitea.ref_name == ''
+    needs: [build_amd64, build_i386, build_arm64, build_armhf, build_riscv64]
     runs-on: nephnet
     steps:
       - name: Docker Login
@@ -133,10 +162,8 @@ jobs:
           password: ${{ secrets.PACKAGER_TOKEN }}
       - name: Docker Manifest
         run: |
-          export BRANCH=${GITHUB_REF##*/}
-          export BRANCH=${BRANCH:-master}
-          docker manifest create code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH} --amend code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-amd64 --amend code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-arm64v8 --amend code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-armv7 --amend code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-riscv64
-          docker manifest push --purge code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}
+          docker manifest create code.nephatrine.net/nephnet/quake2-yamagi:latest --amend code.nephatrine.net/nephnet/quake2-yamagi:master-amd64 --amend code.nephatrine.net/nephnet/quake2-yamagi:master-i386 --amend code.nephatrine.net/nephnet/quake2-yamagi:master-arm64v8 --amend code.nephatrine.net/nephnet/quake2-yamagi:master-armv7 --amend code.nephatrine.net/nephnet/quake2-yamagi:master-riscv64
+          docker manifest push --purge code.nephatrine.net/nephnet/quake2-yamagi:latest
   publish_amd64:
     if: gitea.ref_name == 'master' || gitea.ref_name == ''
     needs: [build_amd64]
@@ -149,8 +176,26 @@ jobs:
           password: ${{ secrets.DOCKER_PASS }}
       - name: Docker Push
         run: |
+          docker pull code.nephatrine.net/nephnet/quake2-yamagi:master-amd64
           docker tag code.nephatrine.net/nephnet/quake2-yamagi:master-amd64 nephatrine/quake2-server:yamagi-amd64
           docker push nephatrine/quake2-server:yamagi-amd64
+          docker rmi nephatrine/quake2-server:yamagi-amd64
+  publish_i386:
+    if: gitea.ref_name == 'master' || gitea.ref_name == ''
+    needs: [build_i386]
+    runs-on: nephnet-i386
+    steps:
+      - name: Docker Login
+        uses: https://github.com/docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+      - name: Docker Push
+        run: |
+          docker pull code.nephatrine.net/nephnet/quake2-yamagi:master-i386
+          docker tag code.nephatrine.net/nephnet/quake2-yamagi:master-i386 nephatrine/quake2-server:yamagi-i386
+          docker push nephatrine/quake2-server:yamagi-i386
+          docker rmi nephatrine/quake2-server:yamagi-i386
   publish_arm64:
     if: gitea.ref_name == 'master' || gitea.ref_name == ''
     needs: [build_arm64]
@@ -163,8 +208,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASS }}
       - name: Docker Push
         run: |
+          docker pull code.nephatrine.net/nephnet/quake2-yamagi:master-arm64v8
           docker tag code.nephatrine.net/nephnet/quake2-yamagi:master-arm64v8 nephatrine/quake2-server:yamagi-arm64v8
           docker push nephatrine/quake2-server:yamagi-arm64v8
+          docker rmi nephatrine/quake2-server:yamagi-arm64v8
   publish_armhf:
     if: gitea.ref_name == 'master' || gitea.ref_name == ''
     needs: [build_armhf]
@@ -177,8 +224,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASS }}
       - name: Docker Push
         run: |
+          docker pull code.nephatrine.net/nephnet/quake2-yamagi:master-armv7
           docker tag code.nephatrine.net/nephnet/quake2-yamagi:master-armv7 nephatrine/quake2-server:yamagi-armv7
           docker push nephatrine/quake2-server:yamagi-armv7
+          docker rmi nephatrine/quake2-server:yamagi-armv7
   publish_riscv64:
     if: gitea.ref_name == 'master' || gitea.ref_name == ''
     needs: [build_riscv64]
@@ -191,10 +240,12 @@ jobs:
           password: ${{ secrets.DOCKER_PASS }}
       - name: Docker Push
         run: |
+          docker pull code.nephatrine.net/nephnet/quake2-yamagi:master-riscv64
           docker tag code.nephatrine.net/nephnet/quake2-yamagi:master-riscv64 nephatrine/quake2-server:yamagi-riscv64
           docker push nephatrine/quake2-server:yamagi-riscv64
+          docker rmi nephatrine/quake2-server:yamagi-riscv64
   publish_manifest:
-    needs: [publish_amd64, publish_arm64, publish_armhf, publish_riscv64]
+    needs: [publish_amd64, publish_i386, publish_arm64, publish_armhf, publish_riscv64]
     runs-on: nephnet
     steps:
       - name: Check Base Image
@@ -212,13 +263,13 @@ jobs:
           password: ${{ secrets.DOCKER_PASS }}
       - name: Docker Manifest
         run: |
-          docker manifest create nephatrine/quake2-server:yamagi-8.20 --amend nephatrine/quake2-server:yamagi-amd64 --amend nephatrine/quake2-server:yamagi-arm64v8 --amend nephatrine/quake2-server:yamagi-armv7 --amend nephatrine/quake2-server:yamagi-riscv64
-          docker manifest create nephatrine/quake2-server:yamagi-8 --amend nephatrine/quake2-server:yamagi-amd64 --amend nephatrine/quake2-server:yamagi-arm64v8 --amend nephatrine/quake2-server:yamagi-armv7 --amend nephatrine/quake2-server:yamagi-riscv64
-          docker manifest create nephatrine/quake2-server:yamagi-latest --amend nephatrine/quake2-server:yamagi-amd64 --amend nephatrine/quake2-server:yamagi-arm64v8 --amend nephatrine/quake2-server:yamagi-armv7 --amend nephatrine/quake2-server:yamagi-riscv64
-          docker manifest create nephatrine/quake2-server:latest --amend nephatrine/quake2-server:yamagi-amd64 --amend nephatrine/quake2-server:yamagi-arm64v8 --amend nephatrine/quake2-server:yamagi-armv7 --amend nephatrine/quake2-server:yamagi-riscv64
+          docker manifest create nephatrine/quake2-server:yamagi-8.20 --amend nephatrine/quake2-server:yamagi-amd64 --amend nephatrine/quake2-server:yamagi-i386 --amend nephatrine/quake2-server:yamagi-arm64v8 --amend nephatrine/quake2-server:yamagi-armv7 --amend nephatrine/quake2-server:yamagi-riscv64
+          docker manifest create nephatrine/quake2-server:yamagi-8 --amend nephatrine/quake2-server:yamagi-amd64 --amend nephatrine/quake2-server:yamagi-i386 --amend nephatrine/quake2-server:yamagi-arm64v8 --amend nephatrine/quake2-server:yamagi-armv7 --amend nephatrine/quake2-server:yamagi-riscv64
+          docker manifest create nephatrine/quake2-server:yamagi --amend nephatrine/quake2-server:yamagi-amd64 --amend nephatrine/quake2-server:yamagi-i386 --amend nephatrine/quake2-server:yamagi-arm64v8 --amend nephatrine/quake2-server:yamagi-armv7 --amend nephatrine/quake2-server:yamagi-riscv64
+          docker manifest create nephatrine/quake2-server:latest --amend nephatrine/quake2-server:yamagi-amd64 --amend nephatrine/quake2-server:yamagi-i386 --amend nephatrine/quake2-server:yamagi-arm64v8 --amend nephatrine/quake2-server:yamagi-armv7 --amend nephatrine/quake2-server:yamagi-riscv64
           docker manifest push --purge nephatrine/quake2-server:yamagi-8.20
           docker manifest push --purge nephatrine/quake2-server:yamagi-8
-          docker manifest push --purge nephatrine/quake2-server:yamagi-latest
+          docker manifest push --purge nephatrine/quake2-server:yamagi
           docker manifest push --purge nephatrine/quake2-server:latest
       - name: Notify Discord
         if: gitea.event_name != 'schedule' || steps.checkbase.outputs.needs-updating == 'true'
