@@ -263,11 +263,11 @@ jobs:
           password: ${{ secrets.DOCKER_PASS }}
       - name: Docker Manifest
         run: |
-          docker manifest create nephatrine/quake2-server:yamagi-8.20 --amend nephatrine/quake2-server:yamagi-amd64 --amend nephatrine/quake2-server:yamagi-i386 --amend nephatrine/quake2-server:yamagi-arm64v8 --amend nephatrine/quake2-server:yamagi-armv7 --amend nephatrine/quake2-server:yamagi-riscv64
+          docker manifest create nephatrine/quake2-server:yamagi-8.30 --amend nephatrine/quake2-server:yamagi-amd64 --amend nephatrine/quake2-server:yamagi-i386 --amend nephatrine/quake2-server:yamagi-arm64v8 --amend nephatrine/quake2-server:yamagi-armv7 --amend nephatrine/quake2-server:yamagi-riscv64
           docker manifest create nephatrine/quake2-server:yamagi-8 --amend nephatrine/quake2-server:yamagi-amd64 --amend nephatrine/quake2-server:yamagi-i386 --amend nephatrine/quake2-server:yamagi-arm64v8 --amend nephatrine/quake2-server:yamagi-armv7 --amend nephatrine/quake2-server:yamagi-riscv64
           docker manifest create nephatrine/quake2-server:yamagi --amend nephatrine/quake2-server:yamagi-amd64 --amend nephatrine/quake2-server:yamagi-i386 --amend nephatrine/quake2-server:yamagi-arm64v8 --amend nephatrine/quake2-server:yamagi-armv7 --amend nephatrine/quake2-server:yamagi-riscv64
           docker manifest create nephatrine/quake2-server:latest --amend nephatrine/quake2-server:yamagi-amd64 --amend nephatrine/quake2-server:yamagi-i386 --amend nephatrine/quake2-server:yamagi-arm64v8 --amend nephatrine/quake2-server:yamagi-armv7 --amend nephatrine/quake2-server:yamagi-riscv64
-          docker manifest push --purge nephatrine/quake2-server:yamagi-8.20
+          docker manifest push --purge nephatrine/quake2-server:yamagi-8.30
           docker manifest push --purge nephatrine/quake2-server:yamagi-8
           docker manifest push --purge nephatrine/quake2-server:yamagi
           docker manifest push --purge nephatrine/quake2-server:latest

@@ -7,25 +7,25 @@ FROM nephatrine/nxbuilder:alpine AS builder
 RUN echo "====== INSTALL LIBRARIES ======" \
  && apk add --no-cache mesa-dev sdl2-dev
 
-ARG YQUAKE2_VERSION=QUAKE2_8_20
+ARG YQUAKE2_VERSION=QUAKE2_8_30
 RUN git -C /root clone -b "$YQUAKE2_VERSION" --single-branch --depth=1 https://github.com/yquake2/yquake2.git
 RUN echo "====== COMPILE QUAKE II ======" \
  && cd /root/yquake2 \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) server game
 
-ARG CTF_VERSION=CTF_1_09
+ARG CTF_VERSION=CTF_1_10
 RUN git -C /root clone -b "$CTF_VERSION" --single-branch --depth=1 https://github.com/yquake2/ctf.git
 RUN echo "====== COMPILE CTF ======" \
  && cd /root/ctf \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 
-ARG XATRIX_VERSION=XATRIX_2_11
+ARG XATRIX_VERSION=XATRIX_2_12
 RUN git -C /root clone -b "$XATRIX_VERSION" --single-branch --depth=1 https://github.com/yquake2/xatrix.git
 RUN echo "====== COMPILE THE RECKONING ======" \
  && cd /root/xatrix \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 
-ARG ROGUE_VERSION=ROGUE_2_10
+ARG ROGUE_VERSION=ROGUE_2_11
 RUN git -C /root clone -b "$ROGUE_VERSION" --single-branch --depth=1 https://github.com/yquake2/rogue.git
 RUN echo "====== COMPILE GROUND ZERO ======" \
  && cd /root/rogue \
