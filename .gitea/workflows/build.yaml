@@ -33,7 +33,7 @@ jobs:
         run: docker push code.nephatrine.net/nephnet/quake2-yamagi:master-amd64
       - name: Notify Discord
         uses: https://github.com/sarisia/actions-status-discord@v1
-        if: always()
+        if: failure()
         with:
           title: "Container Build (X86_64)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
@@ -61,7 +61,7 @@ jobs:
         run: docker push code.nephatrine.net/nephnet/quake2-yamagi:master-i386
       - name: Notify Discord
         uses: https://github.com/sarisia/actions-status-discord@v1
-        if: always()
+        if: failure()
         with:
           title: "Container Build (I686)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
@@ -89,7 +89,7 @@ jobs:
         run: docker push code.nephatrine.net/nephnet/quake2-yamagi:master-arm64v8
       - name: Notify Discord
         uses: https://github.com/sarisia/actions-status-discord@v1
-        if: always()
+        if: failure()
         with:
           title: "Container Build (AARCH64)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
@@ -117,7 +117,7 @@ jobs:
         run: docker push code.nephatrine.net/nephnet/quake2-yamagi:master-armv7
       - name: Notify Discord
         uses: https://github.com/sarisia/actions-status-discord@v1
-        if: always()
+        if: failure()
         with:
           title: "Container Build (ARMV7L)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
@@ -145,7 +145,7 @@ jobs:
         run: docker push code.nephatrine.net/nephnet/quake2-yamagi:master-riscv64
       - name: Notify Discord
         uses: https://github.com/sarisia/actions-status-discord@v1
-        if: always()
+        if: failure()
         with:
           title: "Container Build (RISCV64)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
