@@ -34,6 +34,8 @@ RUN echo "====== COMPILE GROUND ZERO ======" \
 RUN git -C /root clone --single-branch --depth=1 https://github.com/yquake2/zaero.git
 RUN echo "====== COMPILE ZAERO ======" \
  && cd /root/zaero \
+ && sed -i 's~-DYQ2OSTYPE~-DYQ2_OSTYPE~g' Makefile \
+ && sed -i 's~-DYQ2ARCH~-DYQ2_ARCH~g' Makefile \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 
 RUN git -C /root clone --single-branch --depth=1 https://github.com/yquake2/pakextract.git
