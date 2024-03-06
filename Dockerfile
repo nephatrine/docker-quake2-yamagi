@@ -1,8 +1,8 @@
-# SPDX-FileCopyrightText: 2020 - 2023 Daniel Wolf <nephatrine@gmail.com>
+# SPDX-FileCopyrightText: 2020 - 2024 Daniel Wolf <nephatrine@gmail.com>
 #
 # SPDX-License-Identifier: ISC
 
-FROM nephatrine/nxbuilder:alpine AS builder
+FROM code.nephatrine.net/nephnet/nxb-alpine:internal AS builder
 
 RUN echo "====== INSTALL LIBRARIES ======" \
  && apk add --no-cache mesa-dev sdl2-dev
@@ -71,7 +71,7 @@ RUN echo "====== COMPILE OPENTDM ======" \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
  && mv game*.so game.so
 
-FROM nephatrine/alpine-s6:latest
+FROM code.nephatrine.net/nephnet/alpine-s6:internal
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
 RUN echo "====== INSTALL PACKAGES ======" \
