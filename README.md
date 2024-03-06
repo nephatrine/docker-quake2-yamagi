@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2020 - 2023 Daniel Wolf <nephatrine@gmail.com>
+SPDX-FileCopyrightText: 2020 - 2024 Daniel Wolf <nephatrine@gmail.com>
 
 SPDX-License-Identifier: ISC
 -->
@@ -12,7 +12,7 @@ SPDX-License-Identifier: ISC
 
 This docker container manages the Yamagi Quake II dedicated server.
 
-The `yamagi-latest` tag points to version `8.30` and this is the only image
+The `yamagi` tag points to version `8.30` and this is the only image
 actively being updated. There are tags for older versions, but these may no
 longer be using the latest Alpine version and packages.
 
@@ -27,7 +27,7 @@ This is just a simple Quake II server.
 ```yaml
 services:
   quake2-server:
-    image: nephatrine/quake2-server:yamagi-latest
+    image: nephatrine/quake2-server:yamagi
     container_name: quake2-server
     environment:
       TZ: America/New_York
@@ -54,7 +54,7 @@ the installed game data on the server.
 ```yaml
 services:
   quake2-server:
-    image: nephatrine/quake2-server:yamagi-latest
+    image: nephatrine/quake2-server:yamagi
     container_name: quake2-server
     environment:
       TZ: America/New_York
@@ -101,7 +101,7 @@ port each should run on and map those separate ports on both sides.
 ```yaml
 services:
   quake2-server-1:
-    image: nephatrine/quake2-server:yamagi-latest
+    image: nephatrine/quake2-server:yamagi
     container_name: quake2-server-1
     environment:
       TZ: America/New_York
@@ -115,7 +115,7 @@ services:
       - /mnt/containers/quake2-server-1:/mnt/config
       - /mnt/containers/quake2-data:/mnt/shared
   quake2-server-2:
-    image: nephatrine/quake2-server:yamagi-latest
+    image: nephatrine/quake2-server:yamagi
     container_name: quake2-server-2
     environment:
       TZ: America/New_York

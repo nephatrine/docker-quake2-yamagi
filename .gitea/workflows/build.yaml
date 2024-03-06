@@ -215,7 +215,7 @@ jobs:
         id: checkbase
         with:
           base-image: code.nephatrine.net/nephnet/alpine-s6:internal
-          image: nephatrine/quake2-server:yamagi-latest
+          image: nephatrine/quake2-server:yamagi
           platforms: linux/amd64
       - name: Docker Login
         uses: https://github.com/docker/login-action@v3
@@ -229,13 +229,13 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
       - name: Docker Manifest
-        run: docker buildx imagetools create -t code.nephatrine.net/nephnet/quake2-yamagi:latest -t nephatrine/quake2-server:latest -t nephatrine/quake2-server:yamagi-latest -t nephatrine/quake2-server:yamagi-8.30 -t nephatrine/quake2-server:yamagi-8 code.nephatrine.net/nephnet/quake2-yamagi:latest-amd64 code.nephatrine.net/nephnet/quake2-yamagi:latest-i386 code.nephatrine.net/nephnet/quake2-yamagi:latest-arm64 code.nephatrine.net/nephnet/quake2-yamagi:latest-armv7 code.nephatrine.net/nephnet/quake2-yamagi:latest-riscv64
+        run: docker buildx imagetools create -t code.nephatrine.net/nephnet/quake2-yamagi:latest -t nephatrine/quake2-server:latest -t nephatrine/quake2-server:yamagi -t nephatrine/quake2-server:yamagi-8.30 -t nephatrine/quake2-server:yamagi-8 code.nephatrine.net/nephnet/quake2-yamagi:latest-amd64 code.nephatrine.net/nephnet/quake2-yamagi:latest-i386 code.nephatrine.net/nephnet/quake2-yamagi:latest-arm64 code.nephatrine.net/nephnet/quake2-yamagi:latest-armv7 code.nephatrine.net/nephnet/quake2-yamagi:latest-riscv64
       - name: Notify Discord
         if: gitea.event_name != 'schedule' || steps.checkbase.outputs.needs-updating == 'true'
         uses: https://github.com/sarisia/actions-status-discord@v1
         with:
           title: "DockerHub: quake2-server"
-          description: "The container image was pushed to [DockerHub](https://hub.docker.com/repository/docker/nephatrine/quake2-server/general).\nPull `nephatrine/quake2-server:yamagi-latest` for the newest image."
+          description: "The container image was pushed to [DockerHub](https://hub.docker.com/repository/docker/nephatrine/quake2-server/general).\nPull `nephatrine/quake2-server:yamagi` for the newest image."
           nodetail: true
           webhook: ${{ secrets.DISCORD_WEBHOOK_PACKAGE }}
       - name: Checkout Repository
