@@ -44,7 +44,7 @@ jobs:
           docker buildx build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-latest-amd64 --platform linux/amd64 ${{ gitea.workspace }}
       - name: Notify Discord
         uses: https://github.com/sarisia/actions-status-discord@v1
-        if: failure()
+        if: failure() || gitea.event_name != 'schedule'
         with:
           title: "Container Build (X86_64)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
@@ -83,7 +83,7 @@ jobs:
           docker buildx build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-latest-i386 --platform linux/386 ${{ gitea.workspace }}
       - name: Notify Discord
         uses: https://github.com/sarisia/actions-status-discord@v1
-        if: failure()
+        if: failure() || gitea.event_name != 'schedule'
         with:
           title: "Container Build (I686)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
@@ -122,7 +122,7 @@ jobs:
           docker buildx build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-latest-arm64 --platform linux/arm64/v8 ${{ gitea.workspace }}
       - name: Notify Discord
         uses: https://github.com/sarisia/actions-status-discord@v1
-        if: failure()
+        if: failure() || gitea.event_name != 'schedule'
         with:
           title: "Container Build (AARCH64)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
@@ -161,7 +161,7 @@ jobs:
           docker buildx build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-latest-armv7 --platform linux/arm/v7 ${{ gitea.workspace }}
       - name: Notify Discord
         uses: https://github.com/sarisia/actions-status-discord@v1
-        if: failure()
+        if: failure() || gitea.event_name != 'schedule'
         with:
           title: "Container Build (ARMV7L)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
@@ -200,7 +200,7 @@ jobs:
           docker buildx build --pull -t code.nephatrine.net/nephnet/quake2-yamagi:${BRANCH}-latest-riscv64 --platform linux/riscv64 ${{ gitea.workspace }}
       - name: Notify Discord
         uses: https://github.com/sarisia/actions-status-discord@v1
-        if: failure()
+        if: failure() || gitea.event_name != 'schedule'
         with:
           title: "Container Build (RISCV64)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
