@@ -214,7 +214,7 @@ jobs:
         uses: https://github.com/lucacome/docker-image-update-checker@v1
         id: checkbase
         with:
-          base-image: code.nephatrine.net/nephnet/alpine-s6:internal
+          base-image: nephatrine/alpine-s6:latest
           image: nephatrine/quake2-server:yamagi
           platforms: linux/amd64
       - name: Docker Login
