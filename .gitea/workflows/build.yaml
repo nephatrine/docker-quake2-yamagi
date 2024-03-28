@@ -379,8 +379,8 @@ jobs:
         if: gitea.event_name != 'schedule'
         uses: https://github.com/sarisia/actions-status-discord@v1
         with:
-          title: "DockerHub: quake2-yamagi (8.30)"
-          description: "The container image was pushed to [DockerHub](https://hub.docker.com/repository/docker/nephatrine/quake2-server/general).\nPull `nephatrine/quake2-server:latest` for the newest image."
+          title: "DockerHub: quake2-server (YAMAGI-8.30)"
+          description: "The container image was pushed to [DockerHub](https://hub.docker.com/repository/docker/nephatrine/quake2-server/general).\nPull `nephatrine/quake2-server:yamagi` for the newest image."
           nodetail: true
           webhook: ${{ secrets.DISCORD_WEBHOOK_PACKAGE }}
   update_readme:
