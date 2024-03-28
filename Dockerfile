@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: ISC
 
-FROM code.nephatrine.net/nephnet/nxb-alpine:internal AS builder
+FROM code.nephatrine.net/nephnet/nxb-alpine:latest AS builder
 
 RUN echo "====== INSTALL LIBRARIES ======" \
  && apk add --no-cache mesa-dev sdl2-dev
@@ -73,7 +73,7 @@ RUN echo "====== COMPILE OPENTDM ======" \
  && make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
  && mv game*.so game.so
 
-FROM code.nephatrine.net/nephnet/alpine-s6:internal
+FROM code.nephatrine.net/nephnet/alpine-s6:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
 RUN echo "====== INSTALL PACKAGES ======" \
