@@ -1,4 +1,7 @@
 #!/command/with-contenv /bin/bash
+# SPDX-FileCopyrightText: 2022 - 2024 Daniel Wolf <nephatrine@gmail.com>
+#
+# SPDX-License-Identifier: ISC
 
 export HOME=/mnt/config/home
 export GAME_START=${GAME_START:-"+exec server.cfg"}

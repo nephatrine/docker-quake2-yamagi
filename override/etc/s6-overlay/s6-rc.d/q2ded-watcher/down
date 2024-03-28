@@ -1,2 +1,6 @@
 #!/command/execlineb
+# SPDX-FileCopyrightText: 2022 - 2024 Daniel Wolf <nephatrine@gmail.com>
+#
+# SPDX-License-Identifier: ISC
+
 foreground { /command/with-contenv /bin/sh /usr/local/bin/quake2-shutdown }

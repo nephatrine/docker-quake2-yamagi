@@ -3,10 +3,54 @@ Upstream-Name: docker-quake2-yamagi
 Upstream-Contact: Daniel Wolf <nephatrine@gmail.com>
 Source: https://code.nephatrine.net/NephNET/docker-quake2-yamagi
 
-Files: override/etc/s6-overlay/*
-Copyright: 2022 - 2023 Daniel Wolf <nephatrine@gmail.com>
+Files: override/etc/s6-overlay/s6-rc.d/q2ded/dependencies.d/*
+Copyright: 2022 Daniel Wolf <nephatrine@gmail.com>
 License: ISC
 
-Files: override/opt/quake2-data/*
+Files: override/etc/s6-overlay/s6-rc.d/q2ded-watcher/dependencies.d/*
+Copyright: 2022 Daniel Wolf <nephatrine@gmail.com>
+License: ISC
+
+Files: override/etc/s6-overlay/s6-rc.d/quake2_data/dependencies.d/*
+Copyright: 2022 Daniel Wolf <nephatrine@gmail.com>
+License: ISC
+
+Files: override/etc/s6-overlay/s6-rc.d/q2ded/type
+Copyright: 2022 Daniel Wolf <nephatrine@gmail.com>
+License: ISC
+
+Files: override/etc/s6-overlay/s6-rc.d/q2ded-watcher/type
+Copyright: 2022 Daniel Wolf <nephatrine@gmail.com>
+License: ISC
+
+Files: override/etc/s6-overlay/s6-rc.d/quake2_data/type
+Copyright: 2022 Daniel Wolf <nephatrine@gmail.com>
+License: ISC
+
+Files: override/etc/s6-overlay/s6-rc.d/user/contents.d/*
+Copyright: 2022 Daniel Wolf <nephatrine@gmail.com>
+License: ISC
+
+Files: override/opt/quake2-data/3zb2/.filelist
+Copyright: 2023 Daniel Wolf <nephatrine@gmail.com>
+License: ISC
+
+Files: override/opt/quake2-data/baseq2/server.cfg
+Copyright: 2021 Daniel Wolf <nephatrine@gmail.com>
+License: ISC
+
+Files: override/opt/quake2-data/ctf/.filelist
+Copyright: 2023 Daniel Wolf <nephatrine@gmail.com>
+License: ISC
+
+Files: override/opt/quake2-data/openffa/.noclient
+Copyright: 2023 Daniel Wolf <nephatrine@gmail.com>
+License: ISC
+
+Files: override/opt/quake2-data/opentdm/.noclient
+Copyright: 2023 Daniel Wolf <nephatrine@gmail.com>
+License: ISC
+
+Files: override/opt/quake2-data/q2admin/howto.txt
 Copyright: 2021 - 2023 Daniel Wolf <nephatrine@gmail.com>
 License: ISC
