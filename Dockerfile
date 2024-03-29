@@ -37,13 +37,13 @@ WORKDIR /root/pakextract
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 
 RUN git -C /root clone --single-branch --depth=1 https://github.com/DirtBagXon/3zb2-zigflag.git \
- && if [ ! "$(uname -m)" = "x86_64" ]; then sed -i "s~-msse2 -mfpmath=sse~~g" Makefile; fi
+ && if [ ! "$(uname -m)" = "x86_64" ]; then sed -i "s~-msse2 -mfpmath=sse~~g" /root/3zb2-zigflag/Makefile; fi
 WORKDIR /root/3zb2-zigflag
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
  && mv 3zb2/pak10.pak 3zb2/pak6.pak
 
 RUN git -C /root clone --single-branch --depth=1 https://github.com/QwazyWabbitWOS/lmctf60.git \
- && sed -i 's~ldd -r~ldd~g' GNUmakefile
+ && sed -i 's~ldd -r~ldd~g' /root/lmctf60/GNUmakefile
 WORKDIR /root/lmctf60
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
  && mv game*.so game.so
@@ -55,10 +55,10 @@ RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
 
 # hadolint ignore=SC2016
 RUN git -C /root clone --single-branch --depth=1 https://github.com/packetflinger/opentdm.git \
- && sed -i "s~shell pkg-config libcurl --cflags~shell curl-config --cflags~g" Makefile \
- && sed -i "s~shell pkg-config libcurl --libs~shell curl-config --libs~g" Makefile \
- && sed -i "s~-DCURL_STATICLIB~~g" Makefile \
- && sed -i 's~deps/[^ ]*~$(CURL_LIBS)~g' Makefile \
+ && sed -i "s~shell pkg-config libcurl --cflags~shell curl-config --cflags~g" /root/opentdm/Makefile \
+ && sed -i "s~shell pkg-config libcurl --libs~shell curl-config --libs~g" /root/opentdm/Makefile \
+ && sed -i "s~-DCURL_STATICLIB~~g" /root/opentdm/Makefile \
+ && sed -i 's~deps/[^ ]*~$(CURL_LIBS)~g' /root/opentdm/Makefile
 WORKDIR /root/opentdm
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
  && mv game*.so game.so
