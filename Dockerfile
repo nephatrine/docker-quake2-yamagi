@@ -71,7 +71,8 @@ LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
 # hadolint ignore=DL3018
 RUN apk add --no-cache curl libcurl screen sdl2 \
- && mkdir -p /mnt/shared /mnt/mirror
+ && mkdir -p /mnt/shared /mnt/mirror \
+ && rm -rf /tmp/* /var/tmp/*
 
 COPY --from=builder /root/pakextract/pakextract /usr/local/bin/
 COPY --from=builder /root/yquake2/release/ /opt/quake2/
