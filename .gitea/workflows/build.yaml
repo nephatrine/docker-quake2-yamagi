@@ -15,7 +15,7 @@ jobs:
     continue-on-error: true
     steps:
       - name: Checkout Repository
-        uses: https://gitea.com/actions/checkout@v4
+        uses: https://github.com/actions/checkout@v4
       - name: BuildX Setup
         uses: https://github.com/docker/setup-buildx-action@v3
       - name: Docker Login
@@ -74,7 +74,7 @@ jobs:
     continue-on-error: true
     steps:
       - name: Checkout Repository
-        uses: https://gitea.com/actions/checkout@v4
+        uses: https://github.com/actions/checkout@v4
       - name: BuildX Setup
         uses: https://github.com/docker/setup-buildx-action@v3
       - name: Docker Login
@@ -133,7 +133,7 @@ jobs:
     continue-on-error: true
     steps:
       - name: Checkout Repository
-        uses: https://gitea.com/actions/checkout@v4
+        uses: https://github.com/actions/checkout@v4
       - name: BuildX Setup
         uses: https://github.com/docker/setup-buildx-action@v3
       - name: Docker Login
@@ -192,7 +192,7 @@ jobs:
     continue-on-error: true
     steps:
       - name: Checkout Repository
-        uses: https://gitea.com/actions/checkout@v4
+        uses: https://github.com/actions/checkout@v4
       - name: BuildX Setup
         uses: https://github.com/docker/setup-buildx-action@v3
       - name: Docker Login
@@ -251,7 +251,7 @@ jobs:
     continue-on-error: true
     steps:
       - name: Checkout Repository
-        uses: https://gitea.com/actions/checkout@v4
+        uses: https://github.com/actions/checkout@v4
       - name: BuildX Setup
         uses: https://github.com/docker/setup-buildx-action@v3
       - name: Docker Login
@@ -364,7 +364,7 @@ jobs:
     continue-on-error: true
     steps:
       - name: Checkout Repository
-        uses: https://gitea.com/actions/checkout@v4
+        uses: https://github.com/actions/checkout@v4
       - name: Docker Describe
         uses: https://github.com/peter-evans/dockerhub-description@v3
         with:
