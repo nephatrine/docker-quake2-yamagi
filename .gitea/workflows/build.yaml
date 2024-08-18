@@ -318,6 +318,9 @@ jobs:
           password: ${{ secrets.PACKAGER_TOKEN }}
       - name: Docker Manifest
         run: |
+          docker manifest rm code.nephatrine.net/nephnet/quake2-yamagi:8.30 || true
+          docker manifest rm code.nephatrine.net/nephnet/quake2-yamagi:8 || true
+          docker manifest rm code.nephatrine.net/nephnet/quake2-yamagi:latest || true
           docker manifest create code.nephatrine.net/nephnet/quake2-yamagi:8.30 --amend code.nephatrine.net/nephnet/amd64:quake2-yamagi --amend code.nephatrine.net/nephnet/i386:quake2-yamagi --amend code.nephatrine.net/nephnet/arm64:quake2-yamagi --amend code.nephatrine.net/nephnet/armv7:quake2-yamagi --amend code.nephatrine.net/nephnet/riscv64:quake2-yamagi
           docker manifest create code.nephatrine.net/nephnet/quake2-yamagi:8 --amend code.nephatrine.net/nephnet/amd64:quake2-yamagi --amend code.nephatrine.net/nephnet/i386:quake2-yamagi --amend code.nephatrine.net/nephnet/arm64:quake2-yamagi --amend code.nephatrine.net/nephnet/armv7:quake2-yamagi --amend code.nephatrine.net/nephnet/riscv64:quake2-yamagi
           docker manifest create code.nephatrine.net/nephnet/quake2-yamagi:latest --amend code.nephatrine.net/nephnet/amd64:quake2-yamagi --amend code.nephatrine.net/nephnet/i386:quake2-yamagi --amend code.nephatrine.net/nephnet/arm64:quake2-yamagi --amend code.nephatrine.net/nephnet/armv7:quake2-yamagi --amend code.nephatrine.net/nephnet/riscv64:quake2-yamagi
@@ -342,6 +345,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASS }}
       - name: Docker Manifest
         run: |
+          docker manifest rm nephatrine/quake2-server:yamagi-8.30 || true
+          docker manifest rm nephatrine/quake2-server:yamagi-8 || true
+          docker manifest rm nephatrine/quake2-server:yamagi || true
+          docker manifest rm nephatrine/quake2-server:latest || true
           docker manifest create nephatrine/quake2-server:yamagi-8.30 --amend nephatrine/amd64:quake2-yamagi --amend nephatrine/ia32:quake2-yamagi --amend nephatrine/arm64:quake2-yamagi --amend nephatrine/armv7:quake2-yamagi --amend nephatrine/riscv64:quake2-yamagi
           docker manifest create nephatrine/quake2-server:yamagi-8 --amend nephatrine/amd64:quake2-yamagi --amend nephatrine/ia32:quake2-yamagi --amend nephatrine/arm64:quake2-yamagi --amend nephatrine/armv7:quake2-yamagi --amend nephatrine/riscv64:quake2-yamagi
           docker manifest create nephatrine/quake2-server:yamagi --amend nephatrine/amd64:quake2-yamagi --amend nephatrine/ia32:quake2-yamagi --amend nephatrine/arm64:quake2-yamagi --amend nephatrine/armv7:quake2-yamagi --amend nephatrine/riscv64:quake2-yamagi
