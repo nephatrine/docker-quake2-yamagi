@@ -12,7 +12,7 @@ SPDX-License-Identifier: ISC
 
 This docker container manages the Yamagi Quake II dedicated server.
 
-The `yamagi` tag points to version `8.30` and this is the only image
+The `yamagi` tag points to version `8.41` and this is the only image
 actively being updated. There are tags for older versions, but these may no
 longer be using the latest Alpine version and packages.
 

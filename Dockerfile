@@ -8,7 +8,7 @@ FROM code.nephatrine.net/nephnet/nxb-alpine:latest AS builder
 # hadolint ignore=DL3018
 RUN apk add --no-cache mesa-dev sdl2-dev
 
-ARG YQUAKE2_VERSION=QUAKE2_8_30
+ARG YQUAKE2_VERSION=QUAKE2_8_41
 RUN git -C /root clone -b "$YQUAKE2_VERSION" --single-branch --depth=1 https://github.com/yquake2/yquake2.git
 WORKDIR /root/yquake2
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) server game
@@ -18,12 +18,12 @@ RUN git -C /root clone -b "$CTF_VERSION" --single-branch --depth=1 https://githu
 WORKDIR /root/ctf
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 
-ARG XATRIX_VERSION=XATRIX_2_12
+ARG XATRIX_VERSION=XATRIX_2_13
 RUN git -C /root clone -b "$XATRIX_VERSION" --single-branch --depth=1 https://github.com/yquake2/xatrix.git
 WORKDIR /root/xatrix
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 
-ARG ROGUE_VERSION=ROGUE_2_11
+ARG ROGUE_VERSION=ROGUE_2_12
 RUN git -C /root clone -b "$ROGUE_VERSION" --single-branch --depth=1 https://github.com/yquake2/rogue.git
 WORKDIR /root/rogue
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
