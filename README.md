@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2020 - 2024 Daniel Wolf <nephatrine@gmail.com>
+SPDX-FileCopyrightText: 2020 - 2025 Daniel Wolf <nephatrine@gmail.com>
 
 SPDX-License-Identifier: ISC
 -->
@@ -12,7 +12,7 @@ SPDX-License-Identifier: ISC
 
 This docker container manages the Yamagi Quake II dedicated server.
 
-The `yamagi` tag points to version `8.41` and this is the only image
+The `yamagi` tag points to version `8.50` and this is the only image
 actively being updated. There are tags for older versions, but these may no
 longer be using the latest Alpine version and packages.
 
