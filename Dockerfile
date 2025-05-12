@@ -1,12 +1,9 @@
-# SPDX-FileCopyrightText: 2020 - 2025 Daniel Wolf <nephatrine@gmail.com>
-#
+# SPDX-FileCopyrightText: 2020-2025 Daniel Wolf <nephatrine@gmail.com>
 # SPDX-License-Identifier: ISC
 
-# hadolint ignore=DL3007
-FROM code.nephatrine.net/nephnet/nxb-alpine:latest AS builder
+# hadolint global ignore=DL3007,DL3018
 
-# hadolint ignore=DL3018
-RUN apk add --no-cache mesa-dev sdl2-dev
+FROM code.nephatrine.net/nephnet/nxb-alpine:latest AS builder
 
 ARG YQUAKE2_VERSION=QUAKE2_8_50
 RUN git -C /root clone -b "$YQUAKE2_VERSION" --single-branch --depth=1 https://github.com/yquake2/yquake2.git
@@ -65,12 +62,10 @@ RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
 
 # ------------------------------
 
-# hadolint ignore=DL3007
 FROM code.nephatrine.net/nephnet/alpine-s6:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
-# hadolint ignore=DL3018
-RUN apk add --no-cache curl libcurl screen sdl2 \
+RUN apk add --no-cache screen sdl2 \
  && mkdir -p /mnt/shared /mnt/mirror \
  && rm -rf /tmp/* /var/tmp/*
 

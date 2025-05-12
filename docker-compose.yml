@@ -1,11 +1,10 @@
-# SPDX-FileCopyrightText: 2023 Daniel Wolf <nephatrine@gmail.com>
-#
+# SPDX-FileCopyrightText: 2020-2025 Daniel Wolf <nephatrine@gmail.com>
 # SPDX-License-Identifier: ISC
 
 services:
-  quake2-server:
+  quake2-yamagi:
     build: .
-    container_name: quake2-server
+    container_name: quake2-yamagi
     environment:
       TZ: America/New_York
       PUID: 1000
@@ -14,4 +13,4 @@ services:
     ports:
       - "27910:27910/udp"
     volumes:
-      - /mnt/containers/quake2-server:/mnt/config
+      - /mnt/containers/quake2-yamagi:/mnt/config

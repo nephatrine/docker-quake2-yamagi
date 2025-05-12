@@ -1,23 +1,23 @@
-#!/command/with-contenv /bin/sh
-# SPDX-FileCopyrightText: 2022 - 2023 Daniel Wolf <nephatrine@gmail.com>
-#
+#!/command/with-contenv /bin/bash
+# SPDX-FileCopyrightText: 2020-2025 Daniel Wolf <nephatrine@gmail.com>
 # SPDX-License-Identifier: ISC
+
+# shellcheck shell=bash
+# shellcheck disable=SC1012
 
 if [ -d /opt/quake2/openffa/highscores ]; then
   if [ -z "${QUAKE2_DATA}" ]; then
     if [ -n "${QUAKE2_INSTALL}" ] && [ ! "${QUAKE2_INSTALL}" = "true" ] && [ ! "${QUAKE2_INSTALL}" = "false" ]; then
       export QUAKE2_DATA="${QUAKE2_INSTALL}"
     else
-      export QUAKE2_DATA="/mnt/config"
+      export QUAKE2_DATA="/mnt/config/data/quake2"
     fi
   fi
-  if [ -z "${QUAKE2_DATA_SUBPATH}" ]; then
-    export QUAKE2_DATA_SUBPATH=/data/quake2
-  fi
-  if [[ ! -d "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/highscores" ]]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/highscores"
-    if [[ -d "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/highscores" ]]; then
-      /command/s6-setuidgid guardian /bin/cp -Rv /opt/quake2/openffa/highscores/. "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/openffa/highscores/"
+
+  if [[ ! -d "${QUAKE2_DATA}/openffa/highscores" ]]; then
+    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/highscores"
+    if [[ -d "${QUAKE2_DATA}/openffa/highscores" ]]; then
+      /command/s6-setuidgid guardian /bin/cp -Rv /opt/quake2/openffa/highscores/. "${QUAKE2_DATA}/openffa/highscores/"
       /bin/rm -rf /opt/quake2/openffa/highscores
     fi
   fi

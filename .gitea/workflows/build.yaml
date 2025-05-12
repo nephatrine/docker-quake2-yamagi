@@ -1,5 +1,4 @@
-# SPDX-FileCopyrightText: 2023 - 2025 Daniel Wolf <nephatrine@gmail.com>
-#
+# SPDX-FileCopyrightText: 2020-2025 Daniel Wolf <nephatrine@gmail.com>
 # SPDX-License-Identifier: ISC
 
 name: Build Container Image
@@ -7,9 +6,9 @@ run-name: ${{ gitea.actor }} pushed to ${{ gitea.repository }}:${{ gitea.ref_nam
 on:
   push:
     branches:
-      - 'master'
+      - "master"
   schedule:
-    - cron:  '40 19 * * 3'
+    - cron: "40 19 * * 3"
 jobs:
   build_amd64:
     if: gitea.repository_owner == 'NephNET' && (!(startsWith(gitea.event.head_commit.message, 'chore') || startsWith(gitea.event.head_commit.message, 'docs')) || gitea.event_name == 'schedule')
@@ -462,7 +461,7 @@ jobs:
         id: manifest
         run: |
           export IMAGELIST="--amend nephatrine/amd64:quake2-yamagi --amend nephatrine/ia32:quake2-yamagi --amend nephatrine/arm64:quake2-yamagi --amend nephatrine/armv7:quake2-yamagi --amend nephatrine/riscv64:quake2-yamagi"
-          for manifestName in yamagi-8.50 yamagi-8 yamagi latest; do docker manifest rm nephatrine/quake2-server:${manifestName} || true; docker manifest create nephatrine/quake2-server:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/quake2-server:${manifestName}; done
+          for manifestName in yamagi-8.50 yamagi-8 yamagi latest; do docker manifest rm nephatrine/quake2-yamagi:${manifestName} || true; docker manifest create nephatrine/quake2-yamagi:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/quake2-yamagi:${manifestName}; done
       - name: Wait to Retry
         if: steps.manifest.outcome != 'success'
         run: sleep 60
@@ -470,7 +469,7 @@ jobs:
         if: steps.manifest.outcome != 'success'
         run: |
           export IMAGELIST="--amend nephatrine/amd64:quake2-yamagi --amend nephatrine/ia32:quake2-yamagi --amend nephatrine/arm64:quake2-yamagi --amend nephatrine/armv7:quake2-yamagi --amend nephatrine/riscv64:quake2-yamagi"
-          for manifestName in yamagi-8.50 yamagi-8 yamagi latest; do docker manifest rm nephatrine/quake2-server:${manifestName} || true; docker manifest create nephatrine/quake2-server:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/quake2-server:${manifestName}; done
+          for manifestName in yamagi-8.50 yamagi-8 yamagi latest; do docker manifest rm nephatrine/quake2-yamagi:${manifestName} || true; docker manifest create nephatrine/quake2-yamagi:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/quake2-yamagi:${manifestName}; done
       - name: Notify Discord
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
         if: failure()
@@ -490,4 +489,4 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
-          repository: nephatrine/quake2-server
+          repository: nephatrine/quake2-yamagi

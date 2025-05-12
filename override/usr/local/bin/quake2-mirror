@@ -1,57 +1,45 @@
-#!/usr/bin/with-contenv /bin/sh
-# SPDX-FileCopyrightText: 2021 - 2023 Daniel Wolf <nephatrine@gmail.com>
-#
+#!/command/with-contenv /bin/sh
+# SPDX-FileCopyrightText: 2020-2025 Daniel Wolf <nephatrine@gmail.com>
 # SPDX-License-Identifier: ISC
+
+# shellcheck shell=sh
+# shellcheck disable=SC2013
 
 if [ -z "${QUAKE2_DATA}" ]; then
   if [ -n "${QUAKE2_INSTALL}" ] && [ ! "${QUAKE2_INSTALL}" = "true" ] && [ ! "${QUAKE2_INSTALL}" = "false" ]; then
     export QUAKE2_DATA="${QUAKE2_INSTALL}"
   else
-    export QUAKE2_DATA="/mnt/config"
+    export QUAKE2_DATA="/mnt/config/data/quake2"
   fi
 fi
-if [ -z "${QUAKE2_MIRROR}" ]; then
+
+if [ -z "${QUAKE2_MIRROR}" ] || [ "${QUAKE2_MIRROR}" = "false" ]; then
   exit 0
 elif [ "${QUAKE2_MIRROR}" = "true" ]; then
-  export QUAKE2_MIRROR="${QUAKE2_DATA}"
-elif [ "${QUAKE2_MIRROR}" = "false" ]; then
-  export QUAKE2_MIRROR=
+  export QUAKE2_MIRROR="${QUAKE2_DATA}/www/quake2"
 fi
-
-if [ -z "${QUAKE2_DATA_SUBPATH}" ]; then
-  export QUAKE2_DATA_SUBPATH=/data/quake2
-fi
-if [ -z "${QUAKE2_MIRROR_SUBPATH}" ]; then
-  export QUAKE2_MIRROR_SUBPATH=/www/quake2
-fi
-
-# Extract PAKs
 
 if [ -d /tmp/quake2 ]; then
   /bin/rm -rf /tmp/quake2
 fi
-cd "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}" || exit 1
+cd "${QUAKE2_DATA}" || exit 1
 for dir in */; do
   /command/s6-setuidgid guardian /bin/mkdir -p "/tmp/quake2/${dir}"
   dirtrim=$(/bin/echo "${dir}" | /bin/sed 's:/*$::')
   if [ -d "/tmp/quake2/${dir}" ]; then
-    /usr/bin/find "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/${dir}" -type f -name 'pak*.pak' -size -90000k | grep -E 'pak[0-9]\.pak' | sort \
-     | /usr/bin/xargs -n1 -r /command/s6-setuidgid guardian  /usr/local/bin/pakextract -o "/tmp/quake2/${dir}"
-    /usr/bin/find "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/${dir}" -type f -name '*.pak' -size -90000k | grep -Ev 'pak[0-9]\.pak' | sort \
-     | /usr/bin/xargs -n1 -r /command/s6-setuidgid guardian  /usr/local/bin/pakextract -o "/tmp/quake2/${dir}"
-    if [ -f "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/${dir}.filelist" ]; then
-      /command/s6-setuidgid guardian /bin/cp "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/${dir}.filelist" "/tmp/quake2/${dirtrim}.filelist"
-      for fp in $(cat "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/${dir}.filelist"); do
-        /command/s6-setuidgid guardian /bin/cp "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/${dir}${fp}" "/tmp/quake2/${dir}${fp}"
+    /usr/bin/find "${QUAKE2_DATA}/${dir}" -type f -name 'pak*.pak' -size -90000k | grep -E 'pak[0-9]\.pak' | sort | /usr/bin/xargs -n1 -r /command/s6-setuidgid guardian /usr/local/bin/pakextract -o "/tmp/quake2/${dir}"
+    /usr/bin/find "${QUAKE2_DATA}/${dir}" -type f -name '*.pak' -size -90000k | grep -Ev 'pak[0-9]\.pak' | sort | /usr/bin/xargs -n1 -r /command/s6-setuidgid guardian /usr/local/bin/pakextract -o "/tmp/quake2/${dir}"
+    if [ -f "${QUAKE2_DATA}/${dir}.filelist" ]; then
+      /command/s6-setuidgid guardian /bin/cp "${QUAKE2_DATA}/${dir}.filelist" "/tmp/quake2/${dirtrim}.filelist"
+      for fp in $(cat "${QUAKE2_DATA}/${dir}.filelist"); do
+        /command/s6-setuidgid guardian /bin/cp "${QUAKE2_DATA}/${dir}${fp}" "/tmp/quake2/${dir}${fp}"
       done
     fi
   fi
 done
 
-# Mirror Files
-
-while [ ! -d "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}" ]; do
-  dirn="${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}"
+while [ ! -d "${QUAKE2_MIRROR}" ]; do
+  dirn="${QUAKE2_MIRROR}"
   while [ -n "${dirn}" ] && [ ! "${dirn}" = "/" ]; do
     basn=$(/usr/bin/basename "${dirn}")
     dirn=$(/usr/bin/dirname "${dirn}")
@@ -61,37 +49,37 @@ while [ ! -d "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}" ]; do
     fi
   done
 done
-if [ ! -d "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}" ]; then
+if [ ! -d "${QUAKE2_MIRROR}" ]; then
   exit 1
 fi
-/bin/chown guardian:users "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}"
+/bin/chown guardian:users "${QUAKE2_MIRROR}"
 
-/usr/bin/find "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}" -type l -delete
+/usr/bin/find "${QUAKE2_MIRROR}" -type l -delete
 
 cd /tmp/quake2 || exit 1
-/usr/bin/find . -type f -name '*.bsp' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.md2' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.pcx' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.png' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.sp2' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.tga' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.wal' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.wav' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.filelist' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.pak' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
+/usr/bin/find . -type f -name '*.bsp' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.md2' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.pcx' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.png' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.sp2' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.tga' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.wal' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.wav' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.filelist' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.pak' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
 
-cd "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}" || exit 1
-/usr/bin/find . -type f -name '*.bsp' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.md2' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.pcx' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.png' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.sp2' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.tga' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.wal' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
-/usr/bin/find . -type f -name '*.wav' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/" \;
+cd "${QUAKE2_DATA}" || exit 1
+/usr/bin/find . -type f -name '*.bsp' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.md2' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.pcx' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.png' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.sp2' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.tga' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.wal' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
+/usr/bin/find . -type f -name '*.wav' -exec /command/s6-setuidgid guardian /bin/cp --parents {} "${QUAKE2_MIRROR}/" \;
 
 for dir in */; do
-  if [ -d "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/baseq2" ] && [ ! -d "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/${dir}" ] && [ -f "${QUAKE2_DATA}${QUAKE2_DATA_SUBPATH}/${dir}.noclient" ]; then
-    /command/s6-setuidgid guardian /bin/ln -s baseq2 "${QUAKE2_MIRROR}${QUAKE2_MIRROR_SUBPATH}/$(/bin/echo "${dir}" | /bin/sed 's:/*$::')"
+  if [ -d "${QUAKE2_MIRROR}/baseq2" ] && [ ! -d "${QUAKE2_MIRROR}/${dir}" ] && [ -f "${QUAKE2_DATA}/${dir}.noclient" ]; then
+    /command/s6-setuidgid guardian /bin/ln -s baseq2 "${QUAKE2_MIRROR}/$(/bin/echo "${dir}" | /bin/sed 's:/*$::')"
   fi
 done
