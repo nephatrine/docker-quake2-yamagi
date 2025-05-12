@@ -1,3 +1,6 @@
+SPDX-FileCopyrightText: 2020-2025 Daniel Wolf <nephatrine@gmail.com>
+SPDX-License-Identifier: ISC
+
 This is a precompiled version of q2admin for this system that should work with
 the engine on the container.
 

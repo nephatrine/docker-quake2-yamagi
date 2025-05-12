@@ -1,0 +1,76 @@
+version = 1
+SPDX-PackageName = "docker-quake2-yamagi"
+SPDX-PackageSupplier = "Daniel Wolf <nephatrine@gmail.com>"
+SPDX-PackageDownloadLocation = "https://code.nephatrine.net/NephNET/docker-quake2-yamagi"
+
+[[annotations]]
+path = "override/etc/s6-overlay/s6-rc.d/q2ded/dependencies.d/*"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "override/etc/s6-overlay/s6-rc.d/q2ded-watcher/dependencies.d/*"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "override/etc/s6-overlay/s6-rc.d/quake2_data/dependencies.d/*"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "override/etc/s6-overlay/s6-rc.d/q2ded/type"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "override/etc/s6-overlay/s6-rc.d/q2ded-watcher/type"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "override/etc/s6-overlay/s6-rc.d/quake2_data/type"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "override/etc/s6-overlay/s6-rc.d/user/contents.d/*"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "override/opt/quake2-data/3zb2/.filelist"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "override/opt/quake2-data/baseq2/server.cfg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "override/opt/quake2-data/ctf/.filelist"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "override/opt/quake2-data/openffa/.noclient"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "override/opt/quake2-data/opentdm/.noclient"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
