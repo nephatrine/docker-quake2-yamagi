@@ -5,22 +5,22 @@
 
 FROM code.nephatrine.net/nephnet/nxb-alpine:latest AS builder
 
-ARG YQUAKE2_VERSION=QUAKE2_8_50
+ARG YQUAKE2_VERSION=QUAKE2_8_51
 RUN git -C /root clone -b "$YQUAKE2_VERSION" --single-branch --depth=1 https://github.com/yquake2/yquake2.git
 WORKDIR /root/yquake2
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) server game
 
-ARG CTF_VERSION=CTF_1_11
+ARG CTF_VERSION=CTF_1_12
 RUN git -C /root clone -b "$CTF_VERSION" --single-branch --depth=1 https://github.com/yquake2/ctf.git
 WORKDIR /root/ctf
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 
-ARG XATRIX_VERSION=XATRIX_2_14
+ARG XATRIX_VERSION=XATRIX_2_15
 RUN git -C /root clone -b "$XATRIX_VERSION" --single-branch --depth=1 https://github.com/yquake2/xatrix.git
 WORKDIR /root/xatrix
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 
-ARG ROGUE_VERSION=ROGUE_2_13
+ARG ROGUE_VERSION=ROGUE_2_14
 RUN git -C /root clone -b "$ROGUE_VERSION" --single-branch --depth=1 https://github.com/yquake2/rogue.git
 WORKDIR /root/rogue
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))

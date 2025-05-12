@@ -16,7 +16,7 @@ server.
 
 ## Supported Tags
 
-- `quake2-yamagi:8.50`: Yamagi Quake II 8.50
+- `quake2-yamagi:8.51`: Yamagi Quake II 8.51
 
 ## Software
 
