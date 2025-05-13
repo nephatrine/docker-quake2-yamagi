@@ -14,6 +14,9 @@ SPDX-License-Identifier: ISC
 This is an Alpine-based container hosting a Yamagi Quake II dedicated game
 server.
 
+To serve the optional HTTP mirror for game files, you will need a web server,
+such as [nephatrine/nginx-ssl](https://hub.docker.com/repository/docker/nephatrine/nginx-ssl/general).
+
 ## Supported Tags
 
 - `quake2-yamagi:8.51`: Yamagi Quake II 8.51
