@@ -16,7 +16,11 @@ fi
 if [ -z "${QUAKE2_MIRROR}" ] || [ "${QUAKE2_MIRROR}" = "false" ]; then
   exit 0
 elif [ "${QUAKE2_MIRROR}" = "true" ]; then
-  export QUAKE2_MIRROR="${QUAKE2_DATA}/www/quake2"
+  if [ -d /mnt/mirror/www ]; then
+    export QUAKE2_MIRROR="/mnt/mirror/www/quake2"
+  else
+    export QUAKE2_MIRROR="/mnt/config/www/quake2"
+  fi
 fi
 
 if [ -d /tmp/quake2 ]; then
@@ -25,7 +29,7 @@ fi
 cd "${QUAKE2_DATA}" || exit 1
 for dir in */; do
   /command/s6-setuidgid guardian /bin/mkdir -p "/tmp/quake2/${dir}"
-  dirtrim=$(/bin/echo "${dir}" | /bin/sed 's:/*$::')
+  dirtrim=$(echo "${dir}" | /bin/sed 's:/*$::')
   if [ -d "/tmp/quake2/${dir}" ]; then
     /usr/bin/find "${QUAKE2_DATA}/${dir}" -type f -name 'pak*.pak' -size -90000k | grep -E 'pak[0-9]\.pak' | sort | /usr/bin/xargs -n1 -r /command/s6-setuidgid guardian /usr/local/bin/pakextract -o "/tmp/quake2/${dir}"
     /usr/bin/find "${QUAKE2_DATA}/${dir}" -type f -name '*.pak' -size -90000k | grep -Ev 'pak[0-9]\.pak' | sort | /usr/bin/xargs -n1 -r /command/s6-setuidgid guardian /usr/local/bin/pakextract -o "/tmp/quake2/${dir}"
@@ -80,6 +84,6 @@ cd "${QUAKE2_DATA}" || exit 1
 
 for dir in */; do
   if [ -d "${QUAKE2_MIRROR}/baseq2" ] && [ ! -d "${QUAKE2_MIRROR}/${dir}" ] && [ -f "${QUAKE2_DATA}/${dir}.noclient" ]; then
-    /command/s6-setuidgid guardian /bin/ln -s baseq2 "${QUAKE2_MIRROR}/$(/bin/echo "${dir}" | /bin/sed 's:/*$::')"
+    /command/s6-setuidgid guardian /bin/ln -s baseq2 "${QUAKE2_MIRROR}/$(echo "${dir}" | /bin/sed 's:/*$::')"
   fi
 done
