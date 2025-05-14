@@ -9,7 +9,6 @@ services:
       TZ: America/New_York
       PUID: 1000
       PGID: 1000
-      QUAKE2_MIRROR: true
     ports:
       - "27910:27910/udp"
     volumes:
