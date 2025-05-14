@@ -34,38 +34,36 @@ WORKDIR /root/pakextract
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 
 RUN git -C /root clone --single-branch --depth=1 https://github.com/DirtBagXon/3zb2-zigflag.git \
- && if [ ! "$(uname -m)" = "x86_64" ]; then sed -i "s~-msse2 -mfpmath=sse~~g" /root/3zb2-zigflag/Makefile; fi
+  && if [ ! "$(uname -m)" = "x86_64" ]; then sed -i "s~-msse2 -mfpmath=sse~~g" /root/3zb2-zigflag/Makefile; fi
 WORKDIR /root/3zb2-zigflag
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
- && mv 3zb2/pak10.pak 3zb2/pak6.pak
+  && mv 3zb2/pak10.pak 3zb2/pak6.pak
 
 RUN git -C /root clone --single-branch --depth=1 https://github.com/QwazyWabbitWOS/lmctf60.git \
- && sed -i 's~ldd -r~ldd~g' /root/lmctf60/GNUmakefile
+  && sed -i 's~ldd -r~ldd~g' /root/lmctf60/GNUmakefile
 WORKDIR /root/lmctf60
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
- && mv game*.so game.so
+  && mv game*.so game.so
 
 RUN git -C /root clone --single-branch --depth=1 https://github.com/skullernet/openffa.git
 WORKDIR /root/openffa
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
- && mv game*.so game.so
+  && mv game*.so game.so
 
 # hadolint ignore=SC2016
 RUN git -C /root clone --single-branch --depth=1 https://github.com/packetflinger/opentdm.git \
- && sed -i "s~shell pkg-config libcurl --cflags~shell curl-config --cflags~g" /root/opentdm/Makefile \
- && sed -i "s~shell pkg-config libcurl --libs~shell curl-config --libs~g" /root/opentdm/Makefile \
- && sed -i "s~-DCURL_STATICLIB~~g" /root/opentdm/Makefile \
- && sed -i 's~deps/[^ ]*~$(CURL_LIBS)~g' /root/opentdm/Makefile
+  && sed -i "s~shell pkg-config libcurl --cflags~shell curl-config --cflags~g" /root/opentdm/Makefile \
+  && sed -i "s~shell pkg-config libcurl --libs~shell curl-config --libs~g" /root/opentdm/Makefile \
+  && sed -i "s~-DCURL_STATICLIB~~g" /root/opentdm/Makefile \
+  && sed -i 's~deps/[^ ]*~$(CURL_LIBS)~g' /root/opentdm/Makefile
 WORKDIR /root/opentdm
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
- && mv game*.so game.so
-
-# ------------------------------
+  && mv game*.so game.so
 
 FROM code.nephatrine.net/nephnet/alpine-s6:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
-RUN apk add --no-cache screen sdl2 \
+RUN apk add --no-cache sdl2 tmux \
  && mkdir -p /mnt/shared /mnt/mirror \
  && rm -rf /tmp/* /var/tmp/*
 
@@ -89,14 +87,14 @@ COPY --from=builder /root/lmctf60/game.so /opt/quake2/lmctf/
 COPY override /
 
 RUN echo "====== PREP FOR Q2ADMIN ======" \
- && cp /opt/quake2/baseq2/game.so /opt/quake2/baseq2/game.real.so \
- && cp /opt/quake2/ctf/game.so /opt/quake2/ctf/game.real.so \
- && cp /opt/quake2/xatrix/game.so /opt/quake2/xatrix/game.real.so \
- && cp /opt/quake2/rogue/game.so /opt/quake2/rogue/game.real.so \
- && cp /opt/quake2/zaero/game.so /opt/quake2/zaero/game.real.so \
- && cp /opt/quake2/3zb2/game.so /opt/quake2/3zb2/game.real.so \
- && cp /opt/quake2/openffa/game.so /opt/quake2/openffa/game.real.so \
- && cp /opt/quake2/opentdm/game.so /opt/quake2/opentdm/game.real.so \
- && cp /opt/quake2/lmctf/game.so /opt/quake2/lmctf/game.real.so
+  && cp /opt/quake2/baseq2/game.so /opt/quake2/baseq2/game.real.so \
+  && cp /opt/quake2/ctf/game.so /opt/quake2/ctf/game.real.so \
+  && cp /opt/quake2/xatrix/game.so /opt/quake2/xatrix/game.real.so \
+  && cp /opt/quake2/rogue/game.so /opt/quake2/rogue/game.real.so \
+  && cp /opt/quake2/zaero/game.so /opt/quake2/zaero/game.real.so \
+  && cp /opt/quake2/3zb2/game.so /opt/quake2/3zb2/game.real.so \
+  && cp /opt/quake2/openffa/game.so /opt/quake2/openffa/game.real.so \
+  && cp /opt/quake2/opentdm/game.so /opt/quake2/opentdm/game.real.so \
+  && cp /opt/quake2/lmctf/game.so /opt/quake2/lmctf/game.real.so
 
 EXPOSE 27910/udp

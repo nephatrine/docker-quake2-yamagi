@@ -5,6 +5,8 @@
 # shellcheck shell=bash
 # shellcheck disable=SC1012
 
+export HOME=/mnt/config/home
+
 if [ -d /opt/quake2/openffa/highscores ]; then
   if [ -z "${QUAKE2_DATA}" ]; then
     if [ -n "${QUAKE2_INSTALL}" ] && [ ! "${QUAKE2_INSTALL}" = "true" ] && [ ! "${QUAKE2_INSTALL}" = "false" ]; then
@@ -22,9 +24,10 @@ if [ -d /opt/quake2/openffa/highscores ]; then
     fi
   fi
 fi
-if /usr/bin/pgrep -f quakedock >/dev/null; then
-  /command/s6-setuidgid guardian /usr/bin/screen -S quakedock -X stuff "$(/bin/echo -ne \"say QUAKE II SERVER SHUTTING DOWN!\r\")"
-  sleep 6
-  /command/s6-setuidgid guardian /usr/bin/screen -S quakedock -X stuff "$(/bin/echo -ne \"quit\r\")"
-  sleep 2
+
+if /command/s6-setuidgid guardian /usr/bin/tmux list-sessions | /bin/grep quakedock >/dev/null; then
+  /command/s6-setuidgid guardian /usr/bin/tmux send -t quakedock C-z "say QUAKE II SERVER SHUTTING DOWN" ENTER
+  /bin/sleep 6
+  /command/s6-setuidgid guardian /usr/bin/tmux send -t quakedock quit ENTER
+  /bin/sleep 2
 fi

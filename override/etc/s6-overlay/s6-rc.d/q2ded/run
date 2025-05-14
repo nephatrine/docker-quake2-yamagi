@@ -43,27 +43,45 @@ if [[ ! -d "${QUAKE2_DATA}/openffa/motd" && -d /opt/quake2/openffa/motd ]]; then
     /bin/rm -rf /opt/quake2/openffa/motd
   fi
 fi
-if [[ -d /opt/quake2/openffa ]]; then
-  if [[ -d "${QUAKE2_DATA}/openffa/highscores" && ! -d /opt/quake2/openffa/highscores ]]; then
-    /bin/cp -Rvsp "${QUAKE2_DATA}/openffa/highscores" /opt/quake2/openffa/
+if [[ -d "${QUAKE2_DATA}/openffa" ]]; then
+  /bin/chown guardian:users /opt/quake2/openffa
+  if [[ ! -d "${QUAKE2_DATA}/openffa/highscores" ]]; then
+    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/highscores"
   fi
-  if [[ -d "${QUAKE2_DATA}/openffa/mapcfg" && ! -d /opt/quake2/openffa/mapcfg ]]; then
-    /bin/cp -Rvsp "${QUAKE2_DATA}/openffa/mapcfg" /opt/quake2/openffa/
+  if [[ -d "${QUAKE2_DATA}/openffa/highscores" ]]; then
+    if [[ -e /opt/quake2/openffa/highscores ]]; then
+      /bin/rm -f /opt/quake2/openffa/highscores
+    fi
+    /command/s6-setuidgid guardian /bin/ln -s "${QUAKE2_DATA}/openffa/highscores" /opt/quake2/openffa/highscores
   fi
-  if [[ -d "${QUAKE2_DATA}/openffa/motd" && ! -d /opt/quake2/openffa/motd ]]; then
-    /bin/cp -Rvsp "${QUAKE2_DATA}/openffa/motd" /opt/quake2/openffa/
+  if [[ ! -d "${QUAKE2_DATA}/openffa/mapcfg" ]]; then
+    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/mapcfg"
+  fi
+  if [[ -d "${QUAKE2_DATA}/openffa/mapcfg" ]]; then
+    if [[ -e /opt/quake2/openffa/mapcfg ]]; then
+      /bin/rm -f /opt/quake2/openffa/mapcfg
+    fi
+    /command/s6-setuidgid guardian /bin/ln -s "${QUAKE2_DATA}/openffa/mapcfg" /opt/quake2/openffa/mapcfg
+  fi
+  if [[ ! -d "${QUAKE2_DATA}/openffa/motd" ]]; then
+    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/motd"
+  fi
+  if [[ -d "${QUAKE2_DATA}/openffa/motd" ]]; then
+    if [[ -e /opt/quake2/openffa/motd ]]; then
+      /bin/rm -f /opt/quake2/openffa/motd
+    fi
+    /command/s6-setuidgid guardian /bin/ln -s "${QUAKE2_DATA}/openffa/motd" /opt/quake2/openffa/motd
   fi
 fi
 
 cd /opt/quake2 || exit 1
-/command/s6-setuidgid guardian /usr/bin/screen -dmS quakedock ./q2ded -datadir "${QUAKE2_DATA}" +set basepath "${QUAKE2_DATA}" +set savepath /mnt/config/home/.yq2 ${GAME_START}
+/command/s6-setuidgid guardian /usr/bin/tmux new-session -d -s quakedock ./q2ded -datadir "${QUAKE2_DATA}" +set basepath "${QUAKE2_DATA}" +set savepath /mnt/config/home/.yq2 ${GAME_START}
 
 if [[ -f ${HOME}/.screenrc ]]; then
   /bin/chown guardian:users ${HOME}
   /bin/chown guardian:users ${HOME}/.screenrc
 fi
-sleep 5
-
-while /usr/bin/pgrep -f quakedock >/dev/null; do
-  sleep 60
+/bin/sleep 2
+while /command/s6-setuidgid guardian /usr/bin/tmux list-sessions | /bin/grep quakedock >/dev/null; do
+  /bin/sleep 60
 done
