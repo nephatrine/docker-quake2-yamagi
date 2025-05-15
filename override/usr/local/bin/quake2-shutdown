@@ -1,8 +1,8 @@
-#!/command/with-contenv /bin/bash
+#!/command/with-contenv /bin/sh
 # SPDX-FileCopyrightText: 2020-2025 Daniel Wolf <nephatrine@gmail.com>
 # SPDX-License-Identifier: ISC
 
-# shellcheck shell=bash
+# shellcheck shell=sh
 # shellcheck disable=SC1012
 
 export HOME=/mnt/config/home
@@ -16,9 +16,9 @@ if [ -d /opt/quake2/openffa/highscores ]; then
     fi
   fi
 
-  if [[ ! -d "${QUAKE2_DATA}/openffa/highscores" ]]; then
+  if [ ! -d "${QUAKE2_DATA}/openffa/highscores" ]; then
     /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/highscores"
-    if [[ -d "${QUAKE2_DATA}/openffa/highscores" ]]; then
+    if [ -d "${QUAKE2_DATA}/openffa/highscores" ]; then
       /command/s6-setuidgid guardian /bin/cp -Rv /opt/quake2/openffa/highscores/. "${QUAKE2_DATA}/openffa/highscores/"
       /bin/rm -rf /opt/quake2/openffa/highscores
     fi
