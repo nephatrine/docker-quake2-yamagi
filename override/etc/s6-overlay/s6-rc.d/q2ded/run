@@ -83,5 +83,5 @@ if [[ -f ${HOME}/.screenrc ]]; then
 fi
 /bin/sleep 2
 while /command/s6-setuidgid guardian /usr/bin/tmux list-sessions | /bin/grep quakedock >/dev/null; do
-  /bin/sleep 60
+  /bin/sleep 30
 done
