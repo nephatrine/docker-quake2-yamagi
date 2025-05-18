@@ -64,7 +64,7 @@ jobs:
           pull: true
           push: true
           file: Dockerfile
-          tags: code.nephatrine.net/nephnet/quake2-yamagi:latest-${{matrix.nephhub}}
+          tags: code.nephatrine.net/nephnet/quake2-yamagi:8.51-${{matrix.nephhub}}
           cache-from: type=registry,ref=code.nephatrine.net/nephhub/${{matrix.nephhub}}-cache:quake2-yamagi
           cache-to: type=registry,image-manifest=true,oci-mediatypes=true,ref=code.nephatrine.net/nephhub/${{matrix.nephhub}}-cache:quake2-yamagi,mode=max
       - name: Notify Discord
@@ -114,9 +114,9 @@ jobs:
           password: ${{ secrets.DOCKER_PASS }}
       - name: Tag & Push
         run: |
-          docker pull code.nephatrine.net/nephnet/quake2-yamagi:latest-${{matrix.nephhub}} --platform linux/${{matrix.platform}}
-          docker tag code.nephatrine.net/nephnet/quake2-yamagi:latest-${{matrix.nephhub}} nephatrine/${{matrix.dockerhub}}:quake2-yamagi
-          docker rmi code.nephatrine.net/nephnet/quake2-yamagi:latest-${{matrix.nephhub}}
+          docker pull code.nephatrine.net/nephnet/quake2-yamagi:8.51-${{matrix.nephhub}} --platform linux/${{matrix.platform}}
+          docker tag code.nephatrine.net/nephnet/quake2-yamagi:8.51-${{matrix.nephhub}} nephatrine/${{matrix.dockerhub}}:quake2-yamagi
+          docker rmi code.nephatrine.net/nephnet/quake2-yamagi:8.51-${{matrix.nephhub}}
           docker push nephatrine/${{matrix.dockerhub}}:quake2-yamagi
           docker rmi nephatrine/${{matrix.dockerhub}}:quake2-yamagi
       - name: Clean Up
@@ -155,7 +155,7 @@ jobs:
         continue-on-error: true
         id: manifest
         run: |
-          export IMAGELIST="--amend code.nephatrine.net/nephnet/quake2-yamagi:latest-amd64 --amend code.nephatrine.net/nephnet/quake2-yamagi:latest-ia32 --amend code.nephatrine.net/nephnet/quake2-yamagi:latest-arm64 --amend code.nephatrine.net/nephnet/quake2-yamagi:latest-arm32 --amend code.nephatrine.net/nephnet/quake2-yamagi:latest-riscv64"
+          export IMAGELIST="--amend code.nephatrine.net/nephnet/quake2-yamagi:8.51-amd64 --amend code.nephatrine.net/nephnet/quake2-yamagi:8.51-ia32 --amend code.nephatrine.net/nephnet/quake2-yamagi:8.51-arm64 --amend code.nephatrine.net/nephnet/quake2-yamagi:8.51-arm32 --amend code.nephatrine.net/nephnet/quake2-yamagi:8.51-riscv64"
           for manifestName in 8.51 8 latest; do docker manifest rm code.nephatrine.net/nephnet/quake2-yamagi:${manifestName} || true; docker manifest create code.nephatrine.net/nephnet/quake2-yamagi:${manifestName} ${IMAGELIST}; docker manifest push --purge code.nephatrine.net/nephnet/quake2-yamagi:${manifestName}; done
       - name: Wait to Retry
         if: steps.manifest.outcome != 'success'
@@ -163,7 +163,7 @@ jobs:
       - name: Retry Docker Manifest
         if: steps.manifest.outcome != 'success'
         run: |
-          export IMAGELIST="--amend code.nephatrine.net/nephnet/quake2-yamagi:latest-amd64 --amend code.nephatrine.net/nephnet/quake2-yamagi:latest-ia32 --amend code.nephatrine.net/nephnet/quake2-yamagi:latest-arm64 --amend code.nephatrine.net/nephnet/quake2-yamagi:latest-arm32 --amend code.nephatrine.net/nephnet/quake2-yamagi:latest-riscv64"
+          export IMAGELIST="--amend code.nephatrine.net/nephnet/quake2-yamagi:8.51-amd64 --amend code.nephatrine.net/nephnet/quake2-yamagi:8.51-ia32 --amend code.nephatrine.net/nephnet/quake2-yamagi:8.51-arm64 --amend code.nephatrine.net/nephnet/quake2-yamagi:8.51-arm32 --amend code.nephatrine.net/nephnet/quake2-yamagi:8.51-riscv64"
           for manifestName in 8.51 8 latest; do docker manifest rm code.nephatrine.net/nephnet/quake2-yamagi:${manifestName} || true; docker manifest create code.nephatrine.net/nephnet/quake2-yamagi:${manifestName} ${IMAGELIST}; docker manifest push --purge code.nephatrine.net/nephnet/quake2-yamagi:${manifestName}; done
       - name: Notify Discord
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
