@@ -4,6 +4,11 @@ SPDX-PackageSupplier = "Daniel Wolf <nephatrine@gmail.com>"
 SPDX-PackageDownloadLocation = "https://code.nephatrine.net/NephNET/docker-quake2-yamagi"
 
 [[annotations]]
+path = [".vscode/*"]
+SPDX-FileCopyrightText = "Daniel Wolf <nephatrine@gmail.com>"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
 path = "override/etc/s6-overlay/s6-rc.d/q2ded/dependencies.d/*"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "NONE"
