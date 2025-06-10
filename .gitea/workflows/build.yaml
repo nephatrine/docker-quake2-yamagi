@@ -8,7 +8,7 @@ on:
     branches:
       - "master"
   schedule:
-    - cron: "TZ=America/New_York 40 19 * * 3"
+    - cron: "TZ=America/New_York 20 14 * * 3"
 jobs:
   build_images:
     if: gitea.repository_owner == 'NephNET' && (!(startsWith(gitea.event.head_commit.message, 'chore') || startsWith(gitea.event.head_commit.message, 'docs') || startsWith(gitea.event.head_commit.message, 'style')) || gitea.event_name == 'schedule')
