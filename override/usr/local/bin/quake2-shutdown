@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: ISC
 
 # shellcheck shell=sh
-# shellcheck disable=SC1012
 
 export HOME=/mnt/config/home
 
