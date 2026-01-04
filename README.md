@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2020-2025 Daniel Wolf <nephatrine@gmail.com>
+SPDX-FileCopyrightText: 2020-2026 Daniel Wolf <nephatrine@gmail.com>
 SPDX-License-Identifier: ISC
 -->
 
@@ -19,7 +19,7 @@ such as [nephatrine/nginx-ssl](https://hub.docker.com/repository/docker/nephatri
 
 ## Supported Tags
 
-- `quake2-yamagi:8.51`: Yamagi Quake II 8.51
+- `quake2-yamagi:8.60`: Yamagi Quake II 8.60
 
 ## Software
 
