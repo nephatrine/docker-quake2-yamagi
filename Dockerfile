@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2020-2025 Daniel Wolf <nephatrine@gmail.com>
+# SPDX-FileCopyrightText: 2020-2026 Daniel Wolf <nephatrine@gmail.com>
 # SPDX-License-Identifier: ISC
 
 # hadolint global ignore=DL3018
@@ -46,7 +46,7 @@ WORKDIR /root/lmctf60
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
   && mv game*.so game.so
 
-RUN git -C /root clone --single-branch --depth=1 https://github.com/skullernet/openffa.git
+RUN git -C /root clone --single-branch --depth=1 https://code.nephatrine.net/QuakeArchive/openffa.git
 WORKDIR /root/openffa
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
   && mv game*.so game.so
