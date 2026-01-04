@@ -35,6 +35,7 @@ WORKDIR /root/pakextract
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 
 RUN git -C /root clone --single-branch --depth=1 https://github.com/DirtBagXon/3zb2-zigflag.git \
+  && sed -i "s~CFLAGS := ~CFLAGS := -std=gnu17 ~g" /root/3zb2-zigflag/Makefile \
   && if [ ! "$(uname -m)" = "x86_64" ]; then sed -i "s~-msse2 -mfpmath=sse~~g" /root/3zb2-zigflag/Makefile; fi
 WORKDIR /root/3zb2-zigflag
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
@@ -53,6 +54,7 @@ RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) \
 
 # hadolint ignore=SC2016
 RUN git -C /root clone --single-branch --depth=1 https://github.com/packetflinger/opentdm.git \
+  && sed -i "s~CFLAGS ?= ~CFLAGS ?= -std=gnu17 ~g" /root/opentdm/Makefile \
   && sed -i "s~shell pkg-config libcurl --cflags~shell curl-config --cflags~g" /root/opentdm/Makefile \
   && sed -i "s~shell pkg-config libcurl --libs~shell curl-config --libs~g" /root/opentdm/Makefile \
   && sed -i "s~-DCURL_STATICLIB~~g" /root/opentdm/Makefile \
