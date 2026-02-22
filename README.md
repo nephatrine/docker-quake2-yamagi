@@ -5,17 +5,19 @@ SPDX-License-Identifier: ISC
 
 # Quake II Dedicated Server
 
-[![NephCode](https://img.shields.io/static/v1?label=Git&message=NephCode&color=teal)](https://code.nephatrine.net/NephNET/docker-quake2-yamagi)
-[![GitHub](https://img.shields.io/static/v1?label=Git&message=GitHub&color=teal)](https://github.com/nephatrine/docker-quake2-yamagi)
-[![Registry](https://img.shields.io/static/v1?label=OCI&message=NephCode&color=blue)](https://code.nephatrine.net/NephNET/-/packages/container/quake2-yamagi/latest)
-[![DockerHub](https://img.shields.io/static/v1?label=OCI&message=DockerHub&color=blue)](https://hub.docker.com/repository/docker/nephatrine/quake2-yamagi/general)
+[![Git: NephCode](https://img.shields.io/static/v1?label=Git&message=NephCode&color=teal)](https://code.nephatrine.net/NephNET/docker-quake2-yamagi)
+[![Git: GitHub](https://img.shields.io/static/v1?label=Git&message=GitHub&color=teal)](https://github.com/nephatrine/docker-quake2-yamagi)
+[![OCI: NephCode](https://img.shields.io/static/v1?label=OCI&message=NephCode&color=blue)](https://code.nephatrine.net/NephNET/-/packages/container/quake2-yamagi/latest)
+[![OCI: DockerHub](https://img.shields.io/static/v1?label=OCI&message=DockerHub&color=blue)](https://hub.docker.com/repository/docker/nephatrine/quake2-yamagi/general)
 [![unRAID](https://img.shields.io/static/v1?label=unRAID&message=template&color=orange)](https://code.nephatrine.net/NephNET/unraid-containers)
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 
 This is an Alpine-based container hosting a Yamagi Quake II dedicated game
 server.
 
 To serve the optional HTTP mirror for game files, you will need a web server,
-such as [nephatrine/nginx-ssl](https://hub.docker.com/repository/docker/nephatrine/nginx-ssl/general).
+such as
+[nephatrine/nginx-ssl](https://hub.docker.com/repository/docker/nephatrine/nginx-ssl/general).
 
 ## Supported Tags
 
@@ -68,7 +70,7 @@ services:
       PUID: 1000
       PGID: 1000
     ports:
-      - "27910:27910/udp"
+      - 27910:27910/udp
     volumes:
       - /mnt/containers/quake2-yamagi:/mnt/config
 ```
@@ -90,7 +92,7 @@ services:
       PGID: 1000
       QUAKE2_MIRROR: /mnt/mirror/www/default
     ports:
-      - "27910:27910/udp"
+      - 27910:27910/udp
     volumes:
       - /mnt/containers/quake2-yamagi:/mnt/config
       - /mnt/containers/quake2-http:/mnt/mirror
@@ -103,9 +105,9 @@ services:
       PGID: 1000
       ADMINIP: 127.0.0.1
       TRUSTSN: 192.168.0.0/16
-      DNSADDR: "8.8.8.8 8.8.4.4"
+      DNSADDR: 8.8.8.8 8.8.4.4
     ports:
-      - "80:8080/tcp"
+      - 80:8080/tcp
     volumes:
       - /mnt/containers/quake2-http:/mnt/config
 ```
@@ -127,9 +129,9 @@ services:
       PUID: 1000
       PGID: 1000
       QUAKE2_INSTALL: /mnt/shared/data/quake2
-      GAME_START: "+set port 27910 +exec server.cfg"
+      GAME_START: +set port 27910 +exec server.cfg
     ports:
-      - "27910:27910/udp"
+      - 27910:27910/udp
     volumes:
       - /mnt/containers/quake2-yamagi-1:/mnt/config
       - /mnt/containers/quake2-data:/mnt/shared
@@ -141,9 +143,9 @@ services:
       PUID: 1000
       PGID: 1000
       QUAKE2_DATA: /mnt/shared/data/quake2
-      GAME_START: "+set port 27911 +game ctf +exec server.cfg"
+      GAME_START: +set port 27911 +game ctf +exec server.cfg
     ports:
-      - "27911:27911/udp"
+      - 27911:27911/udp
     depends_on:
       - quake2-yamagi-1
     volumes:
@@ -159,6 +161,6 @@ properly.
 
 ### docker run
 
-```bash
+```sh
 docker run --rm -ti code.nephatrine.net/nephnet/quake2-yamagi:latest /bin/bash
 ```
