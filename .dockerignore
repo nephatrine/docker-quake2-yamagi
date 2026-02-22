@@ -3,13 +3,10 @@
 
 .git
 .gitea
-.reuse
-.vscode
 LICENSES
 
 .gitattributes
 .gitignore
-*.code-workspace
 *.md
 *.sh
 *.toml
