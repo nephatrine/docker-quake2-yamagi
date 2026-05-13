@@ -1,5 +1,5 @@
 #!/command/with-contenv /bin/sh
-# SPDX-FileCopyrightText: 2020-2025 Daniel Wolf <nephatrine@gmail.com>
+# SPDX-FileCopyrightText: 2020-2026 Daniel Wolf <nephatrine@gmail.com>
 # SPDX-License-Identifier: ISC
 
 # shellcheck shell=sh
@@ -49,16 +49,16 @@ fi
 
 if [ -n "${QUAKE2_INSTALL}" ] && [ ! -d "${QUAKE2_INSTALL}/baseq2" ]; then
   if [ ! -f /tmp/q2-314-demo-x86.exe ]; then
-    /usr/bin/wget -qO /tmp/q2-314-demo-x86.exe https://nephatrine.net/backup/quake2/q2-314-demo-x86.exe
+    /usr/bin/wget -qO /tmp/q2-314-demo-x86.exe https://nephatrine.net/files/idstuff/quake2/q2-314-demo-x86.exe
   fi
   if [ ! -f /tmp/q2-3.20-x86-full-ctf.exe ]; then
-    /usr/bin/wget -qO /tmp/q2-3.20-x86-full-ctf.exe https://nephatrine.net/backup/quake2/q2-3.20-x86-full-ctf.exe
+    /usr/bin/wget -qO /tmp/q2-3.20-x86-full-ctf.exe https://nephatrine.net/files/idstuff/quake2/q2-3.20-x86-full-ctf.exe
   fi
   if [ ! -f /tmp/match1.tar.gz ]; then
-    /usr/bin/wget -qO /tmp/match1.tar.gz https://nephatrine.net/backup/quake2/maps/match1.tar.gz
+    /usr/bin/wget -qO /tmp/match1.tar.gz https://nephatrine.net/files/idstuff/quake2/maps/match1.tar.gz
   fi
   if [ ! -f /tmp/dm_64.tar.gz ]; then
-    /usr/bin/wget -qO /tmp/dm_64.tar.gz https://nephatrine.net/backup/quake2/maps/dm_64.tar.gz
+    /usr/bin/wget -qO /tmp/dm_64.tar.gz https://nephatrine.net/files/idstuff/quake2/maps/dm_64.tar.gz
   fi
   if [ ! -d "${QUAKE2_INSTALL}/baseq2/maps" ]; then
     /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_INSTALL}/baseq2/maps"
@@ -87,13 +87,13 @@ fi
 
 if [ -n "${QUAKE2_INSTALL}" ] && [ ! -d "${QUAKE2_INSTALL}/ctf" ]; then
   if [ ! -f /tmp/q2-3.20-x86-full-ctf.exe ]; then
-    /usr/bin/wget -qO /tmp/q2-3.20-x86-full-ctf.exe https://nephatrine.net/backup/quake2/q2-3.20-x86-full-ctf.exe
+    /usr/bin/wget -qO /tmp/q2-3.20-x86-full-ctf.exe https://nephatrine.net/files/idstuff/quake2/q2-3.20-x86-full-ctf.exe
   fi
   if [ ! -f /tmp/q2ctf150upgrade.zip ]; then
-    /usr/bin/wget -qO /tmp/q2ctf150upgrade.zip https://nephatrine.net/backup/quake2/q2ctf150upgrade.zip
+    /usr/bin/wget -qO /tmp/q2ctf150upgrade.zip https://nephatrine.net/files/idstuff/quake2/ctf/q2ctf150upgrade.zip
   fi
   if [ ! -f /tmp/q2ctf4a.tar.gz ]; then
-    /usr/bin/wget -qO /tmp/q2ctf4a.tar.gz https://nephatrine.net/backup/quake2/maps/q2ctf4a.tar.gz
+    /usr/bin/wget -qO /tmp/q2ctf4a.tar.gz https://nephatrine.net/files/idstuff/quake2/maps/q2ctf4a.tar.gz
   fi
   if [ ! -d "${QUAKE2_INSTALL}/ctf/maps" ]; then
     /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_INSTALL}/ctf/maps"
