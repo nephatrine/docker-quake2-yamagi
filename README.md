@@ -21,7 +21,7 @@ such as
 
 ## Supported Tags
 
-- `quake2-yamagi:8.60`: Yamagi Quake II 8.60
+- `quake2-yamagi:8.70`: Yamagi Quake II 8.70
 
 ## Software
 

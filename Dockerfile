@@ -6,22 +6,22 @@
 # hadolint ignore=DL3007
 FROM code.nephatrine.net/nephnet/nxb-alpine:latest AS builder
 
-ARG YQUAKE2_VERSION=QUAKE2_8_60
+ARG YQUAKE2_VERSION=QUAKE2_8_70
 RUN git -C /root clone -b "$YQUAKE2_VERSION" --single-branch --depth=1 https://github.com/yquake2/yquake2.git
 WORKDIR /root/yquake2
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 )) server game
 
-ARG CTF_VERSION=CTF_1_12
+ARG CTF_VERSION=CTF_1_13
 RUN git -C /root clone -b "$CTF_VERSION" --single-branch --depth=1 https://github.com/yquake2/ctf.git
 WORKDIR /root/ctf
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 
-ARG XATRIX_VERSION=XATRIX_2_16
+ARG XATRIX_VERSION=XATRIX_2_17
 RUN git -C /root clone -b "$XATRIX_VERSION" --single-branch --depth=1 https://github.com/yquake2/xatrix.git
 WORKDIR /root/xatrix
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 
-ARG ROGUE_VERSION=ROGUE_2_15
+ARG ROGUE_VERSION=ROGUE_2_16
 RUN git -C /root clone -b "$ROGUE_VERSION" --single-branch --depth=1 https://github.com/yquake2/rogue.git
 WORKDIR /root/rogue
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
@@ -34,7 +34,7 @@ RUN git -C /root clone --single-branch --depth=1 https://github.com/yquake2/pake
 WORKDIR /root/pakextract
 RUN make -j$(( $(getconf _NPROCESSORS_ONLN) / 2 + 1 ))
 
-ARG ZIGFLAG_VERSION=v1.04
+ARG ZIGFLAG_VERSION=v1.05
 RUN git -C /root clone -b "$ZIGFLAG_VERSION" --single-branch --depth=1 https://github.com/DirtBagXon/3zb2-zigflag.git \
   && sed -i "s~CFLAGS := ~CFLAGS := -std=gnu17 ~g" /root/3zb2-zigflag/Makefile \
   && if [ ! "$(uname -m)" = "x86_64" ]; then sed -i "s~-msse2 -mfpmath=sse~~g" /root/3zb2-zigflag/Makefile; fi
