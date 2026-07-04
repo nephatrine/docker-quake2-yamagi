@@ -1,5 +1,5 @@
 #!/command/with-contenv /bin/sh
-# SPDX-FileCopyrightText: 2020-2025 Daniel Wolf <nephatrine@gmail.com>
+# SPDX-FileCopyrightText: 2020-2026 Daniel Wolf <nephatrine@gmail.com>
 # SPDX-License-Identifier: ISC
 
 # shellcheck shell=sh
@@ -7,26 +7,28 @@
 export HOME=/mnt/config/home
 
 if [ -d /opt/quake2/openffa/highscores ]; then
-  if [ -z "${QUAKE2_DATA}" ]; then
-    if [ -n "${QUAKE2_INSTALL}" ] && [ ! "${QUAKE2_INSTALL}" = "true" ] && [ ! "${QUAKE2_INSTALL}" = "false" ]; then
-      export QUAKE2_DATA="${QUAKE2_INSTALL}"
-    else
-      export QUAKE2_DATA="/mnt/config/data/quake2"
-    fi
-  fi
+	if [ -z "${QUAKE2_DATA}" ]; then
+		if [ -n "${QUAKE2_INSTALL}" ] && [ ! "${QUAKE2_INSTALL}" = "true" ] && [ ! "${QUAKE2_INSTALL}" = "false" ]; then
+			export QUAKE2_DATA="${QUAKE2_INSTALL}"
+		else
+			export QUAKE2_DATA="/mnt/config/data/quake2"
+		fi
+	fi
 
-  if [ ! -d "${QUAKE2_DATA}/openffa/highscores" ]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/highscores"
-    if [ -d "${QUAKE2_DATA}/openffa/highscores" ]; then
-      /command/s6-setuidgid guardian /bin/cp -Rv /opt/quake2/openffa/highscores/. "${QUAKE2_DATA}/openffa/highscores/"
-      /bin/rm -rf /opt/quake2/openffa/highscores
-    fi
-  fi
+	if [ ! -d "${QUAKE2_DATA}/openffa/highscores" ]; then
+		/command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/highscores"
+		if [ -d "${QUAKE2_DATA}/openffa/highscores" ]; then
+			/command/s6-setuidgid guardian /bin/cp -Rv /opt/quake2/openffa/highscores/. "${QUAKE2_DATA}/openffa/highscores/"
+			/bin/rm -rf /opt/quake2/openffa/highscores
+		fi
+	fi
 fi
 
 if /command/s6-setuidgid guardian /usr/bin/tmux list-sessions | /bin/grep quakedock >/dev/null; then
-  /command/s6-setuidgid guardian /usr/bin/tmux send -t quakedock C-z "say QUAKE II SERVER SHUTTING DOWN" ENTER
-  /bin/sleep 6
-  /command/s6-setuidgid guardian /usr/bin/tmux send -t quakedock quit ENTER
-  /bin/sleep 2
+	/command/s6-setuidgid guardian /usr/bin/tmux send -t quakedock C-z "say QUAKE II SERVER SHUTTING DOWN" ENTER
+	/bin/sleep 6
+	/command/s6-setuidgid guardian /usr/bin/tmux send -t quakedock quit ENTER
+	/bin/sleep 2
 fi
+
+# vim:ft=sh

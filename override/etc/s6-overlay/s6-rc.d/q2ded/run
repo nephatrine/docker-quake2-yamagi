@@ -1,5 +1,5 @@
 #!/command/with-contenv /bin/sh
-# SPDX-FileCopyrightText: 2020-2025 Daniel Wolf <nephatrine@gmail.com>
+# SPDX-FileCopyrightText: 2020-2026 Daniel Wolf <nephatrine@gmail.com>
 # SPDX-License-Identifier: ISC
 
 # shellcheck shell=sh
@@ -9,69 +9,69 @@ export HOME=/mnt/config/home
 export GAME_START=${GAME_START:-"+exec server.cfg"}
 
 if [ -z "${QUAKE2_DATA}" ]; then
-  if [ -n "${QUAKE2_INSTALL}" ] && [ ! "${QUAKE2_INSTALL}" = "true" ] && [ ! "${QUAKE2_INSTALL}" = "false" ]; then
-    export QUAKE2_DATA="${QUAKE2_INSTALL}"
-  else
-    export QUAKE2_DATA="/mnt/config/data/quake2"
-  fi
+	if [ -n "${QUAKE2_INSTALL}" ] && [ ! "${QUAKE2_INSTALL}" = "true" ] && [ ! "${QUAKE2_INSTALL}" = "false" ]; then
+		export QUAKE2_DATA="${QUAKE2_INSTALL}"
+	else
+		export QUAKE2_DATA="/mnt/config/data/quake2"
+	fi
 fi
 
 if [ -f "${HOME}/.yq2/baseq2/qconsole.log" ]; then
-  /bin/ls -la "${HOME}/.yq2/baseq2/qconsole.log" | /command/s6-setuidgid guardian /usr/bin/tee -a /mnt/config/log/qconsole.log
-  /bin/cat "${HOME}/.yq2/baseq2/qconsole.log" | /command/s6-setuidgid guardian /usr/bin/tee -a /mnt/config/log/qconsole.log
-  /bin/rm -f "${HOME}/.yq2/baseq2/qconsole.log"
+	/bin/ls -la "${HOME}/.yq2/baseq2/qconsole.log" | /command/s6-setuidgid guardian /usr/bin/tee -a /mnt/config/log/qconsole.log
+	/bin/cat "${HOME}/.yq2/baseq2/qconsole.log" | /command/s6-setuidgid guardian /usr/bin/tee -a /mnt/config/log/qconsole.log
+	/bin/rm -f "${HOME}/.yq2/baseq2/qconsole.log"
 fi
 
 if [ ! -d "${QUAKE2_DATA}/openffa/highscores" ] && [ -d /opt/quake2/openffa/highscores ]; then
-  /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/highscores"
-  if [ -d "${QUAKE2_DATA}/openffa/highscores" ]; then
-    /command/s6-setuidgid guardian /bin/cp -Rv /opt/quake2/openffa/highscores/. "${QUAKE2_DATA}/openffa/highscores/"
-    /bin/rm -rf /opt/quake2/openffa/highscores
-  fi
+	/command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/highscores"
+	if [ -d "${QUAKE2_DATA}/openffa/highscores" ]; then
+		/command/s6-setuidgid guardian /bin/cp -Rv /opt/quake2/openffa/highscores/. "${QUAKE2_DATA}/openffa/highscores/"
+		/bin/rm -rf /opt/quake2/openffa/highscores
+	fi
 fi
 if [ ! -d "${QUAKE2_DATA}/openffa/mapcfg" ] && [ -d /opt/quake2/openffa/mapcfg ]; then
-  /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/mapcfg"
-  if [ -d "${QUAKE2_DATA}/openffa/mapcfg" ]; then
-    /command/s6-setuidgid guardian /bin/cp -Rv /opt/quake2/openffa/mapcfg/. "${QUAKE2_DATA}/openffa/mapcfg/"
-    /bin/rm -rf /opt/quake2/openffa/mapcfg
-  fi
+	/command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/mapcfg"
+	if [ -d "${QUAKE2_DATA}/openffa/mapcfg" ]; then
+		/command/s6-setuidgid guardian /bin/cp -Rv /opt/quake2/openffa/mapcfg/. "${QUAKE2_DATA}/openffa/mapcfg/"
+		/bin/rm -rf /opt/quake2/openffa/mapcfg
+	fi
 fi
 if [ ! -d "${QUAKE2_DATA}/openffa/motd" ] && [ -d /opt/quake2/openffa/motd ]; then
-  /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/motd"
-  if [ -d "${QUAKE2_DATA}/openffa/motd" ]; then
-    /command/s6-setuidgid guardian /bin/cp -Rv /opt/quake2/openffa/motd/. "${QUAKE2_DATA}/openffa/motd/"
-    /bin/rm -rf /opt/quake2/openffa/motd
-  fi
+	/command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/motd"
+	if [ -d "${QUAKE2_DATA}/openffa/motd" ]; then
+		/command/s6-setuidgid guardian /bin/cp -Rv /opt/quake2/openffa/motd/. "${QUAKE2_DATA}/openffa/motd/"
+		/bin/rm -rf /opt/quake2/openffa/motd
+	fi
 fi
 if [ -d "${QUAKE2_DATA}/openffa" ]; then
-  /bin/chown guardian:users /opt/quake2/openffa
-  if [ ! -d "${QUAKE2_DATA}/openffa/highscores" ]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/highscores"
-  fi
-  if [ -d "${QUAKE2_DATA}/openffa/highscores" ]; then
-    if [ -e /opt/quake2/openffa/highscores ]; then
-      /bin/rm -f /opt/quake2/openffa/highscores
-    fi
-    /command/s6-setuidgid guardian /bin/ln -s "${QUAKE2_DATA}/openffa/highscores" /opt/quake2/openffa/highscores
-  fi
-  if [ ! -d "${QUAKE2_DATA}/openffa/mapcfg" ]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/mapcfg"
-  fi
-  if [ -d "${QUAKE2_DATA}/openffa/mapcfg" ]; then
-    if [ -e /opt/quake2/openffa/mapcfg ]; then
-      /bin/rm -f /opt/quake2/openffa/mapcfg
-    fi
-    /command/s6-setuidgid guardian /bin/ln -s "${QUAKE2_DATA}/openffa/mapcfg" /opt/quake2/openffa/mapcfg
-  fi
-  if [ ! -d "${QUAKE2_DATA}/openffa/motd" ]; then
-    /command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/motd"
-  fi
-  if [ -d "${QUAKE2_DATA}/openffa/motd" ]; then
-    if [ -e /opt/quake2/openffa/motd ]; then
-      /bin/rm -f /opt/quake2/openffa/motd
-    fi
-    /command/s6-setuidgid guardian /bin/ln -s "${QUAKE2_DATA}/openffa/motd" /opt/quake2/openffa/motd
-  fi
+	/bin/chown guardian:users /opt/quake2/openffa
+	if [ ! -d "${QUAKE2_DATA}/openffa/highscores" ]; then
+		/command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/highscores"
+	fi
+	if [ -d "${QUAKE2_DATA}/openffa/highscores" ]; then
+		if [ -e /opt/quake2/openffa/highscores ]; then
+			/bin/rm -f /opt/quake2/openffa/highscores
+		fi
+		/command/s6-setuidgid guardian /bin/ln -s "${QUAKE2_DATA}/openffa/highscores" /opt/quake2/openffa/highscores
+	fi
+	if [ ! -d "${QUAKE2_DATA}/openffa/mapcfg" ]; then
+		/command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/mapcfg"
+	fi
+	if [ -d "${QUAKE2_DATA}/openffa/mapcfg" ]; then
+		if [ -e /opt/quake2/openffa/mapcfg ]; then
+			/bin/rm -f /opt/quake2/openffa/mapcfg
+		fi
+		/command/s6-setuidgid guardian /bin/ln -s "${QUAKE2_DATA}/openffa/mapcfg" /opt/quake2/openffa/mapcfg
+	fi
+	if [ ! -d "${QUAKE2_DATA}/openffa/motd" ]; then
+		/command/s6-setuidgid guardian /bin/mkdir -p "${QUAKE2_DATA}/openffa/motd"
+	fi
+	if [ -d "${QUAKE2_DATA}/openffa/motd" ]; then
+		if [ -e /opt/quake2/openffa/motd ]; then
+			/bin/rm -f /opt/quake2/openffa/motd
+		fi
+		/command/s6-setuidgid guardian /bin/ln -s "${QUAKE2_DATA}/openffa/motd" /opt/quake2/openffa/motd
+	fi
 fi
 
 cd /opt/quake2 || exit 1
@@ -79,5 +79,7 @@ cd /opt/quake2 || exit 1
 
 /bin/sleep 2
 while /command/s6-setuidgid guardian /usr/bin/tmux list-sessions | /bin/grep quakedock >/dev/null; do
-  /bin/sleep 30
+	/bin/sleep 30
 done
+
+# vim:ft=sh
